@@ -23,7 +23,7 @@ class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: false,
+      isLoading: true,
       items: [],
       searchQuery: '',
       offset: 0,
@@ -31,6 +31,12 @@ class App extends Component<{}, AppState> {
       triggerFetch: false,
       error: null
     };
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 2000);
   }
 
   handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
