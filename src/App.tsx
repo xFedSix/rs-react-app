@@ -3,52 +3,78 @@ import Button from './components/Button/Button';
 import SearchInputField from './components/SearchInputField/SearchInputField';
 import './App.css';
 import Loader from './components/Loader/Loader';
-import Results from './components/Results/Results';
+import ResultsItem, { Item } from './components/Results/ResultItems';
+import Listeners from './Listeners/Listeners';
 
 interface AppState {
   isLoading: boolean;
-  items: Array<{ id: number; title: string; description: string }>;
+  items: Item[];
+  searchQuery: string;
+  offset: number;
+  limit: number;
+  triggerFetch: boolean;
 }
 
 class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: true,
-      items: [
-        { id: 1, title: 'Item 1', description: 'Description 1' },
-        { id: 2, title: 'Item 2', description: 'Description 2' }
-      ]
+      isLoading: false,
+      items: [],
+      searchQuery: '',
+      offset: 0,
+      limit: 20,
+      triggerFetch: false
     };
   }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, 2000);
-  }
-  render(): ReactNode {
-    const { isLoading, items } = this.state;
 
-    if (isLoading) {
-      return <Loader />;
-    }
+  handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Search query:', event.target.value);
+    this.setState({ searchQuery: event.target.value });
+  };
+
+  handleSearch = () => {
+    console.log('Search button clicked');
+    console.log('Search query:', this.state.searchQuery);
+
+    this.setState({ isLoading: true, triggerFetch: true });
+  };
+
+  handleDataFetched = (data: Item[]) => {
+    console.log('Data fetched:', data);
+    this.setState({ items: data, isLoading: false, triggerFetch: false });
+  };
+
+  render(): ReactNode {
+    const { isLoading, items, searchQuery, triggerFetch } = this.state;
+
     return (
       <div className="container">
         <header className="App-header">
-          <h1>Top controls</h1>
+          <h1>Pokémon Search</h1>
         </header>
         <main>
           <section className="Search-content">
-            <SearchInputField placeholder="Search Input Field" />
-            <Button text="Search" />
+            <SearchInputField
+              placeholder="Search Pokémon"
+              value={searchQuery}
+              onChange={this.handleSearchChange}
+            />
+            <Button text="Search" onClick={this.handleSearch} />
           </section>
           <section className="Results-content">
             <h2>Results</h2>
-            <Results items={items} />
+            {isLoading ? <Loader /> : <ResultsItem items={items} />}
           </section>
+          <Listeners
+            searchQuery={searchQuery}
+            onDataFetched={this.handleDataFetched}
+            triggerFetch={triggerFetch}
+            endpoint="pokemon"
+          />
         </main>
         <footer>
-          <Button text="Error" />
+          <Button text="Error" onClick={this.handleSearch} />
         </footer>
       </div>
     );
