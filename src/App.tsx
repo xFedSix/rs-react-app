@@ -41,7 +41,14 @@ class App extends Component<{}, AppState> {
   };
 
   handleSearch = async () => {
-    this.setState({ isLoading: true, triggerFetch: true });
+    const trimmedQuery = this.state.searchQuery.trim();
+    console.log('Search query:', trimmedQuery);
+
+    this.setState({
+      searchQuery: trimmedQuery,
+      isLoading: true,
+      triggerFetch: true
+    });
 
     const { searchQuery, offset, limit } = this.state;
     try {
@@ -75,6 +82,7 @@ class App extends Component<{}, AppState> {
                   placeholder="Search Pokémon"
                   value={searchQuery}
                   onChange={this.handleSearchChange}
+                  onEnterPress={this.handleSearch}
                 />
                 <Button text="Search" onClick={this.handleSearch} />
               </section>
