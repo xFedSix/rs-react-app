@@ -5,6 +5,7 @@ import './App.css';
 import Loader from './components/Loader/Loader';
 import ResultsItem, { Item } from './components/Results/ResultItems';
 import Listeners from './Listeners/Listeners';
+import { fetchData } from './API/ApiFetchData';
 
 interface AppState {
   isLoading: boolean;
@@ -19,7 +20,7 @@ class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: false,
+      isLoading: true,
       items: [],
       searchQuery: '',
       offset: 0,
@@ -28,16 +29,31 @@ class App extends Component<{}, AppState> {
     };
   }
 
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 2000);
+  }
+
   handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('Search query:', event.target.value);
     this.setState({ searchQuery: event.target.value });
   };
 
-  handleSearch = () => {
+  handleSearch = async () => {
     console.log('Search button clicked');
-    console.log('Search query:', this.state.searchQuery);
-
+    console.log('Current state:', this.state);
     this.setState({ isLoading: true, triggerFetch: true });
+
+    const { searchQuery, offset, limit } = this.state;
+    try {
+      const data = await fetchData(searchQuery, 'pokemon', offset, limit);
+      this.setState({ items: data, isLoading: false, triggerFetch: false });
+      console.log('Data fetched:', data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      this.setState({ isLoading: false, triggerFetch: false });
+    }
   };
 
   handleDataFetched = (data: Item[]) => {
@@ -54,24 +70,30 @@ class App extends Component<{}, AppState> {
           <h1>Pokémon Search</h1>
         </header>
         <main>
-          <section className="Search-content">
-            <SearchInputField
-              placeholder="Search Pokémon"
-              value={searchQuery}
-              onChange={this.handleSearchChange}
-            />
-            <Button text="Search" onClick={this.handleSearch} />
-          </section>
-          <section className="Results-content">
-            <h2>Results</h2>
-            {isLoading ? <Loader /> : <ResultsItem items={items} />}
-          </section>
-          <Listeners
-            searchQuery={searchQuery}
-            onDataFetched={this.handleDataFetched}
-            triggerFetch={triggerFetch}
-            endpoint="pokemon"
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <section className="Search-content">
+                <SearchInputField
+                  placeholder="Search Pokémon"
+                  value={searchQuery}
+                  onChange={this.handleSearchChange}
+                />
+                <Button text="Search" onClick={this.handleSearch} />
+              </section>
+              <section className="Results-content">
+                <h2>Results</h2>
+                <ResultsItem items={items} />
+              </section>
+              <Listeners
+                searchQuery={searchQuery}
+                onDataFetched={this.handleDataFetched}
+                triggerFetch={triggerFetch}
+                endpoint="pokemon"
+              />
+            </>
+          )}
         </main>
         <footer>
           <Button text="Error" onClick={this.handleSearch} />

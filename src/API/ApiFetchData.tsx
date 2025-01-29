@@ -4,11 +4,9 @@ export const fetchData = async (
   offset: number,
   limit: number
 ) => {
-  let url = `https://pokeapi.co/api/v2/${endpoint}?offset=${offset}&limit=${limit}`;
-
-  if (searchQuery) {
-    url = `${searchQuery}?offset=${offset}&limit=${limit}`;
-  }
+  let url = searchQuery
+    ? `${searchQuery}?offset=${offset}&limit=${limit}`
+    : `https://pokeapi.co/api/v2/${endpoint}?offset=${offset}&limit=${limit}`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -16,5 +14,6 @@ export const fetchData = async (
   }
 
   const data = await response.json();
-  return data.results;
+  console.log('Fetched data:', data);
+  return data.results || data;
 };
