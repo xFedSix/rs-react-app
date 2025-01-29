@@ -1,8 +1,11 @@
 import React from 'react';
 
 export interface Item {
-  id: number;
   name: string;
+  url?: string;
+  base_happiness?: number;
+  capture_rate?: number;
+  color?: { name: string };
 }
 
 interface ResultsProps {
@@ -10,36 +13,46 @@ interface ResultsProps {
 }
 
 const ResultsItem: React.FC<ResultsProps> = ({ items }) => {
-  console.log('Items:', items);
-
   if (!items) {
     return <div>No results found.</div>;
   }
 
-  if (Array.isArray(items)) {
-    if (items.length === 0) {
-      return <div>No results found.</div>;
-    }
+  const renderTableRows = (item: Item) => (
+    <tr key={item.name}>
+      <td>{item.name}</td>
+      <td>
+        {item.url ? (
+          item.url
+        ) : (
+          <>
+            Base Happiness:{' '}
+            {item.base_happiness ? item.base_happiness : 'No information'},
+            Capture Rate:{' '}
+            {item.capture_rate ? item.capture_rate : 'No information'}, Color:{' '}
+            {item.color ? item.color.name : 'No information'}
+          </>
+        )}
+      </td>
+    </tr>
+  );
 
-    return (
-      <div>
-        {items.map((item) => (
-          <div key={item.id}>
-            <h3>{item.id}</h3>
-            <p>{item.name}</p>
-          </div>
-        ))}
-      </div>
-    );
-  } else {
-    const item = items as Item;
-    return (
-      <div>
-        <h3>{item.id}</h3>
-        <p>{item.name}</p>
-      </div>
-    );
-  }
+  return (
+    <div className="results-container">
+      <table className="results-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Item Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(items)
+            ? items.map(renderTableRows)
+            : renderTableRows(items as Item)}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default ResultsItem;
