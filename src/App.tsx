@@ -3,16 +3,22 @@ import Button from './components/Button/Button';
 import SearchInputField from './components/SearchInputField/SearchInputField';
 import './App.css';
 import Loader from './components/Loader/Loader';
+import Results from './components/Results/Results';
 
 interface AppState {
   isLoading: boolean;
+  items: Array<{ id: number; title: string; description: string }>;
 }
 
 class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: true
+      isLoading: true,
+      items: [
+        { id: 1, title: 'Item 1', description: 'Description 1' },
+        { id: 2, title: 'Item 2', description: 'Description 2' }
+      ]
     };
   }
   componentDidMount() {
@@ -21,7 +27,7 @@ class App extends Component<{}, AppState> {
     }, 2000);
   }
   render(): ReactNode {
-    const { isLoading } = this.state;
+    const { isLoading, items } = this.state;
 
     if (isLoading) {
       return <Loader />;
@@ -38,6 +44,7 @@ class App extends Component<{}, AppState> {
           </section>
           <section className="Results-content">
             <h2>Results</h2>
+            <Results items={items} />
           </section>
         </main>
         <footer>
