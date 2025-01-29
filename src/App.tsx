@@ -2,9 +2,30 @@ import { Component, ReactNode } from 'react';
 import Button from './components/Button/Button';
 import SearchInputField from './components/SearchInputField/SearchInputField';
 import './App.css';
+import Loader from './components/Loader/Loader';
 
-class App extends Component {
+interface AppState {
+  isLoading: boolean;
+}
+
+class App extends Component<{}, AppState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      isLoading: true
+    };
+  }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 2000);
+  }
   render(): ReactNode {
+    const { isLoading } = this.state;
+
+    if (isLoading) {
+      return <Loader />;
+    }
     return (
       <div className="container">
         <header className="App-header">
