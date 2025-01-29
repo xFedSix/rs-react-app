@@ -41,8 +41,6 @@ class App extends Component<{}, AppState> {
   };
 
   handleSearch = async () => {
-    console.log('Search button clicked');
-    console.log('Current state:', this.state);
     this.setState({ isLoading: true, triggerFetch: true });
 
     const { searchQuery, offset, limit } = this.state;
@@ -51,13 +49,11 @@ class App extends Component<{}, AppState> {
       this.setState({ items: data, isLoading: false, triggerFetch: false });
       console.log('Data fetched:', data);
     } catch (error) {
-      console.error('Error fetching data:', error);
       this.setState({ isLoading: false, triggerFetch: false });
     }
   };
 
   handleDataFetched = (data: Item[]) => {
-    console.log('Data fetched:', data);
     this.setState({ items: data, isLoading: false, triggerFetch: false });
   };
 
