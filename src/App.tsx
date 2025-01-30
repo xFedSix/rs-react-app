@@ -32,7 +32,9 @@ class App extends Component<{}, AppState> {
       error: null
     };
   }
-
+  throwError = () => {
+    throw new Error('Test error');
+  };
   componentDidMount() {
     setTimeout(() => {
       this.setState({ isLoading: false });
