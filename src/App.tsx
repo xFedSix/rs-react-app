@@ -28,7 +28,9 @@ class App extends Component<{}, AppState> {
       triggerFetch: false
     };
   }
-
+  throwError = () => {
+    throw new Error('Test error');
+  };
   componentDidMount() {
     setTimeout(() => {
       this.setState({ isLoading: false });
@@ -36,13 +38,11 @@ class App extends Component<{}, AppState> {
   }
 
   handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Search query:', event.target.value);
     this.setState({ searchQuery: event.target.value });
   };
 
   handleSearch = async () => {
     const trimmedQuery = this.state.searchQuery.trim();
-    console.log('Search query:', trimmedQuery);
 
     this.setState({
       searchQuery: trimmedQuery,
@@ -54,7 +54,6 @@ class App extends Component<{}, AppState> {
     try {
       const data = await fetchData(searchQuery, 'pokemon', offset, limit);
       this.setState({ items: data, isLoading: false, triggerFetch: false });
-      console.log('Data fetched:', data);
     } catch (error) {
       this.setState({ isLoading: false, triggerFetch: false });
     }
@@ -100,7 +99,7 @@ class App extends Component<{}, AppState> {
           )}
         </main>
         <footer>
-          <Button text="Error" onClick={this.handleSearch} />
+          <Button text="Throw Error" onClick={this.throwError} />
         </footer>
       </div>
     );
