@@ -3,9 +3,9 @@ import Button from './components/Button/Button';
 import SearchInputField from './components/SearchInputField/SearchInputField';
 import './App.css';
 import Loader from './components/Loader/Loader';
-import ResultsItem, { Item } from './components/Results/ResultItems';
+import ResultsItem from './components/Results/ResultItems';
 import Listeners from './Listeners/Listeners';
-import { fetchData } from './API/ApiFetchData';
+import { Item } from './components/Results/ResultItems';
 
 interface AppState {
   isLoading: boolean;
@@ -14,57 +14,55 @@ interface AppState {
   offset: number;
   limit: number;
   triggerFetch: boolean;
+  error: string | null;
 }
 
 class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       items: [],
       searchQuery: '',
       offset: 0,
       limit: 20,
-      triggerFetch: false
+      triggerFetch: false,
+      error: null
     };
-  }
-  throwError = () => {
-    throw new Error('Test error');
-  };
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, 2000);
   }
 
   handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ searchQuery: event.target.value });
   };
 
-  handleSearch = async () => {
+  handleSearch = () => {
     const trimmedQuery = this.state.searchQuery.trim();
-
     this.setState({
       searchQuery: trimmedQuery,
       isLoading: true,
       triggerFetch: true
     });
-
-    const { searchQuery, offset, limit } = this.state;
-    try {
-      const data = await fetchData(searchQuery, 'pokemon', offset, limit);
-      this.setState({ items: data, isLoading: false, triggerFetch: false });
-    } catch (error) {
-      this.setState({ isLoading: false, triggerFetch: false });
-    }
   };
 
   handleDataFetched = (data: Item[]) => {
-    this.setState({ items: data, isLoading: false, triggerFetch: false });
+    this.setState({
+      items: data,
+      isLoading: false,
+      triggerFetch: false,
+      error: null
+    });
+  };
+
+  handleError = (error: string) => {
+    this.setState({ error, isLoading: false, triggerFetch: false });
+  };
+
+  throwError = () => {
+    throw new Error('Test error');
   };
 
   render(): ReactNode {
-    const { isLoading, items, searchQuery, triggerFetch } = this.state;
+    const { isLoading, items, searchQuery, triggerFetch, error } = this.state;
 
     return (
       <div className="container">
@@ -72,35 +70,32 @@ class App extends Component<{}, AppState> {
           <h1>Pokémon Search</h1>
         </header>
         <main>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <>
-              <section className="Search-content">
-                <SearchInputField
-                  placeholder="Search Pokémon"
-                  value={searchQuery}
-                  onChange={this.handleSearchChange}
-                  onEnterPress={this.handleSearch}
-                />
-                <Button text="Search" onClick={this.handleSearch} />
-              </section>
-              <section className="Results-content">
-                <h2>Results</h2>
-                <ResultsItem items={items} />
-              </section>
-              <Listeners
-                searchQuery={searchQuery}
-                onDataFetched={this.handleDataFetched}
-                triggerFetch={triggerFetch}
-                endpoint="pokemon"
-              />
-            </>
-          )}
-        </main>
-        <footer>
+          <section className="Search-content">
+            <SearchInputField
+              placeholder="Search Pokémon"
+              value={searchQuery}
+              onChange={this.handleSearchChange}
+              onEnterPress={this.handleSearch}
+            />
+            <Button text="Search" onClick={this.handleSearch} />
+          </section>
+          <section className="Results-content">
+            <h2>Results</h2>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <ResultsItem items={items} error={error} />
+            )}
+          </section>
           <Button text="Throw Error" onClick={this.throwError} />
-        </footer>
+          <Listeners
+            searchQuery={searchQuery}
+            onDataFetched={this.handleDataFetched}
+            onError={this.handleError}
+            triggerFetch={triggerFetch}
+            endpoint="pokemon"
+          />
+        </main>
       </div>
     );
   }

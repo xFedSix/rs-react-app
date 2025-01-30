@@ -8,12 +8,16 @@ export const fetchData = async (
     ? `${searchQuery}?offset=${offset}&limit=${limit}`
     : `https://pokeapi.co/api/v2/${endpoint}?offset=${offset}&limit=${limit}`;
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
 
-  const data = await response.json();
-  console.log('Fetched data:', data);
-  return data.results || data;
+    const data = await response.json();
+    return data.results || data;
+  } catch (error) {
+    console.error('Error occurred in fetchData:', error);
+    throw error;
+  }
 };

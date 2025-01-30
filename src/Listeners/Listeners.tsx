@@ -7,6 +7,7 @@ interface ListenersProps {
   onDataFetched: (data: Item[]) => void;
   triggerFetch: boolean;
   endpoint: string;
+  onError: (error: string) => void;
 }
 
 interface ListenersState {
@@ -28,7 +29,6 @@ class Listeners extends Component<ListenersProps, ListenersState> {
       this.props.triggerFetch &&
       prevProps.triggerFetch !== this.props.triggerFetch
     ) {
-      console.log('Triggering data fetch');
       this.handleFetchData();
     }
   }
@@ -37,21 +37,22 @@ class Listeners extends Component<ListenersProps, ListenersState> {
     try {
       const { searchQuery, endpoint } = this.props;
       const result = await fetchData(searchQuery, endpoint, 0, 20);
-      console.log('Fetched result:', result);
       this.setState({ data: result, error: null });
       this.props.onDataFetched(result);
     } catch (error) {
       if (error instanceof Error) {
         this.setState({ error: error.message });
+        this.props.onError(error.message);
       } else {
-        this.setState({ error: 'An unknown error occurred' });
+        const errorMessage = 'Unknown error occurred';
+        this.setState({ error: errorMessage });
+        this.props.onError(errorMessage);
       }
     }
   };
 
   render() {
-    const { error } = this.state;
-    return <div>{error && <div>Error: {error}</div>}</div>;
+    return null;
   }
 }
 

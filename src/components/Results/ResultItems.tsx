@@ -10,9 +10,24 @@ export interface Item {
 
 interface ResultsProps {
   items: Item[] | Item;
+  error: string | null;
 }
 
-const ResultsItem: React.FC<ResultsProps> = ({ items }) => {
+const ResultsItem: React.FC<ResultsProps> = ({ items, error }) => {
+  if (error) {
+    return (
+      <div className="results-container">
+        <table className="results-table">
+          <tbody>
+            <tr>
+              <td colSpan={2}>{error}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   if (!items) {
     return <div>No results found.</div>;
   }
