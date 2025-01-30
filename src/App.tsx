@@ -23,7 +23,7 @@ class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       items: [],
       searchQuery: '',
       offset: 0,

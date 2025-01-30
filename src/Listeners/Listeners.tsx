@@ -29,7 +29,6 @@ class Listeners extends Component<ListenersProps, ListenersState> {
       this.props.triggerFetch &&
       prevProps.triggerFetch !== this.props.triggerFetch
     ) {
-      console.log('Triggering data fetch');
       this.handleFetchData();
     }
   }
