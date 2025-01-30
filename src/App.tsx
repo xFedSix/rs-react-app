@@ -6,6 +6,7 @@ import Loader from './components/Loader/Loader';
 import ResultsItem from './components/Results/ResultItems';
 import Listeners from './Listeners/Listeners';
 import { Item } from './components/Results/ResultItems';
+import ThrowErrorButton from './components/Button/ThrowErrorButton';
 
 interface AppState {
   isLoading: boolean;
@@ -54,6 +55,7 @@ class App extends Component<{}, AppState> {
   };
 
   handleError = (error: string) => {
+    console.log('Throwing error from App.');
     this.setState({ error, isLoading: false, triggerFetch: false });
   };
 
@@ -87,7 +89,7 @@ class App extends Component<{}, AppState> {
               <ResultsItem items={items} error={error} />
             )}
           </section>
-          <Button text="Throw Error" onClick={this.throwError} />
+          <ThrowErrorButton />
           <Listeners
             searchQuery={searchQuery}
             onDataFetched={this.handleDataFetched}
