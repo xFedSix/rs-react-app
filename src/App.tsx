@@ -7,6 +7,7 @@ import ResultsItem from './components/Results/ResultItems';
 import Listeners from './Listeners/Listeners';
 import { Item } from './components/Results/ResultItems';
 import ThrowErrorButton from './components/Button/ThrowErrorButton';
+import { fetchData } from './API/ApiFetchData';
 
 interface AppState {
   isLoading: boolean;
@@ -53,9 +54,21 @@ class App extends Component<{}, AppState> {
       error: null
     });
   };
+  handleInitialFetch = async () => {
+    this.setState({ isLoading: true });
+    try {
+      const data = await fetchData('', 'pokemon', 0, 20);
+      this.handleDataFetched(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleError(error.message);
+      } else {
+        this.handleError(String(error));
+      }
+    }
+  };
 
   handleError = (error: string) => {
-    console.log('Throwing error from App.');
     this.setState({ error, isLoading: false, triggerFetch: false });
   };
 
@@ -78,6 +91,7 @@ class App extends Component<{}, AppState> {
               value={searchQuery}
               onChange={this.handleSearchChange}
               onEnterPress={this.handleSearch}
+              onInitialFetch={this.handleInitialFetch}
             />
             <Button text="Search" onClick={this.handleSearch} />
           </section>
