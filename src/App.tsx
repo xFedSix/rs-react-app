@@ -77,7 +77,6 @@ class App extends Component<{}, AppState> {
   };
 
   handleError = (error: string) => {
-    console.log('Throwing error from App.');
     this.setState({ error, isLoading: false, triggerFetch: false });
   };
 

@@ -6,6 +6,7 @@ interface SearchInputFieldProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEnterPress: () => void;
+  onInitialFetch: () => void;
 }
 
 class SearchInputField extends Component<SearchInputFieldProps> {
@@ -15,6 +16,11 @@ class SearchInputField extends Component<SearchInputFieldProps> {
       this.props.onChange({
         target: { value: savedQuery }
       } as React.ChangeEvent<HTMLInputElement>);
+      setTimeout(() => {
+        this.props.onEnterPress();
+      }, 0);
+    } else {
+      this.props.onInitialFetch();
     }
   }
 
