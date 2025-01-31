@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '../components/Button/Button';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -20,10 +21,18 @@ class ErrorBoundary extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by Error Boundary:', error, errorInfo);
   }
+  handleReset = () => {
+    this.setState({ hasError: false });
+  };
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <div>
+          <h1>Something went wrong.</h1>
+          <Button text="Back" onClick={this.handleReset} />
+        </div>
+      );
     }
 
     return this.props.children;
