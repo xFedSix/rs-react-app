@@ -5,7 +5,7 @@ export const fetchData = async (
   limit: number
 ) => {
   let url = searchQuery
-    ? `${searchQuery}?offset=${offset}&limit=${limit}`
+    ? `https://pokeapi.co/api/v2/${endpoint}/${searchQuery}`
     : `https://pokeapi.co/api/v2/${endpoint}?offset=${offset}&limit=${limit}`;
 
   try {

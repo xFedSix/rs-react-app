@@ -57,8 +57,8 @@ const ResultsItem: React.FC<ResultsProps> = ({ items, error }) => {
       <table className="results-table">
         <thead>
           <tr>
-            <th>Item Name</th>
-            <th>Item Description</th>
+            <th>Pokémon Name</th>
+            <th>Pokémon Description</th>
           </tr>
         </thead>
         <tbody>
