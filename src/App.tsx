@@ -72,7 +72,7 @@ class App extends Component<{}, AppState> {
           <h1>Pokémon Search</h1>
         </header>
         <main>
-          <section className="Search-content">
+          <section className="search-content">
             <SearchInputField
               placeholder="Search Pokémon"
               value={searchQuery}
@@ -81,7 +81,7 @@ class App extends Component<{}, AppState> {
             />
             <Button text="Search" onClick={this.handleSearch} />
           </section>
-          <section className="Results-content">
+          <section className="results-content">
             <h2>Results</h2>
             {isLoading ? (
               <Loader />

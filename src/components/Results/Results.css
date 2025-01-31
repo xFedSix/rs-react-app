@@ -1,5 +1,9 @@
-.results-container {
+.results-content {
+  display: flex;
   margin: 20px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .results-table {
@@ -15,5 +19,5 @@
 
 .results-table th {
   background-color: #f2f2f2;
-  text-align: left;
+  text-align: center;
 }/*# sourceMappingURL=Results.css.map */
