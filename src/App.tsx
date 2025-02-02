@@ -1,13 +1,13 @@
 import { Component, ReactNode } from 'react';
 import Button from './components/Button/Button';
-import SearchInputField from './components/SearchInputField/SearchInputField';
+import SearchInputField from './components/Search/SearchInputField';
 import './App.css';
-import Loader from './components/Loader/Loader';
-import ResultsItem from './components/Results/ResultItems';
 import Listeners from './Listeners/Listeners';
-import { Item } from './components/Results/ResultItems';
+import { Item } from './components/Result/Result';
 import ThrowErrorButton from './components/Button/ThrowErrorButton';
 import { fetchData } from './API/ApiFetchData';
+import Header from './components/Header/Header';
+import Main from './components/Main/Main';
 
 interface AppState {
   isLoading: boolean;
@@ -80,12 +80,10 @@ class App extends Component<{}, AppState> {
     const { isLoading, items, searchQuery, triggerFetch, error } = this.state;
 
     return (
-      <div className="container">
-        <header className="App-header">
-          <h1>Pokémon Search</h1>
-        </header>
-        <main>
-          <section className="search-content">
+      <body>
+        <div className="container">
+          <Header />
+          <div className="search-container">
             <SearchInputField
               placeholder="Search Pokémon"
               value={searchQuery}
@@ -94,15 +92,8 @@ class App extends Component<{}, AppState> {
               onInitialFetch={this.handleInitialFetch}
             />
             <Button text="Search" onClick={this.handleSearch} />
-          </section>
-          <section className="results-content">
-            <h2>Results</h2>
-            {isLoading ? (
-              <Loader />
-            ) : (
-              <ResultsItem items={items} error={error} />
-            )}
-          </section>
+          </div>
+          <Main isLoading={isLoading} items={items} error={error} />
           <ThrowErrorButton />
           <Listeners
             searchQuery={searchQuery}
@@ -111,8 +102,8 @@ class App extends Component<{}, AppState> {
             triggerFetch={triggerFetch}
             endpoint="pokemon"
           />
-        </main>
-      </div>
+        </div>
+      </body>
     );
   }
 }

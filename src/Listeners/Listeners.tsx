@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { fetchData } from '../API/ApiFetchData';
-import { Item } from '../components/Results/ResultItems';
+import { Item } from '../components/Result/Result';
 
 interface ListenersProps {
   searchQuery: string;

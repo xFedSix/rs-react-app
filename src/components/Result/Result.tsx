@@ -1,5 +1,5 @@
 import React from 'react';
-import './Results.scss';
+import './Result.scss';
 
 export interface Item {
   name: string;
@@ -9,12 +9,12 @@ export interface Item {
   color?: { name: string };
 }
 
-interface ResultsProps {
+export interface ResultsProps {
   items: Item[] | Item;
   error: string | null;
 }
 
-const ResultsItem: React.FC<ResultsProps> = ({ items, error }) => {
+const Result: React.FC<ResultsProps> = ({ items, error }) => {
   if (error) {
     return (
       <div className="results-container">
@@ -71,4 +71,4 @@ const ResultsItem: React.FC<ResultsProps> = ({ items, error }) => {
   );
 };
 
-export default ResultsItem;
+export default Result;
