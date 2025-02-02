@@ -80,10 +80,6 @@ class App extends Component<{}, AppState> {
     this.setState({ error, isLoading: false, triggerFetch: false });
   };
 
-  throwError = () => {
-    throw new Error('Test error');
-  };
-
   render(): ReactNode {
     const { isLoading, items, searchQuery, triggerFetch, error } = this.state;
 
