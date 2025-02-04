@@ -24,7 +24,7 @@ export const fetchData = async (
   console.log('Constructed URL:', url);
 
   try {
-    const apiKey = '4349880b-b433-4782-8178-7c1ca522f697';
+    const apiKey = import.meta.env.VITE_API_KEY;
     if (!apiKey) {
       throw new Error('API key is missing');
     }
