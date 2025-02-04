@@ -2,11 +2,13 @@ import React from 'react';
 import './Result.scss';
 
 export interface Item {
+  id: number | string;
   name: string;
   url?: string;
   base_happiness?: number;
   capture_rate?: number;
   color?: { name: string };
+  flavorText: string;
 }
 
 export interface ResultsProps {
@@ -28,24 +30,22 @@ const Result: React.FC<ResultsProps> = ({ items, error }) => {
       </div>
     );
   }
-
   if (!items) {
     return <div>No results found.</div>;
   }
 
   const renderTableRows = (item: Item) => (
-    <tr key={item.name}>
+    <tr key={item.id}>
       <td>{item.name}</td>
       <td>
         {item.url ? (
           item.url
         ) : (
           <>
-            Base Happiness:{' '}
-            {item.base_happiness ? item.base_happiness : 'No information'},
-            Capture Rate:{' '}
-            {item.capture_rate ? item.capture_rate : 'No information'}, Color:{' '}
-            {item.color ? item.color.name : 'No information'}
+            Description :{' '}
+            {item.flavorText
+              ? JSON.stringify(item.flavorText)
+              : 'No information'}
           </>
         )}
       </td>

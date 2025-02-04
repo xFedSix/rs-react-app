@@ -65,7 +65,7 @@ class App extends Component<{}, AppState> {
   handleInitialFetch = async () => {
     this.setState({ isLoading: true });
     try {
-      const data = await fetchData('', 'pokemon', 0, 20);
+      const data = await fetchData('');
       this.handleDataFetched(data);
     } catch (error) {
       if (error instanceof Error) {
@@ -84,30 +84,27 @@ class App extends Component<{}, AppState> {
     const { isLoading, items, searchQuery, triggerFetch, error } = this.state;
 
     return (
-      <body>
-        <div className="container">
-          <Header />
-          <div className="search-container">
-            <SearchInputField
-              placeholder="Search Pokémon"
-              value={searchQuery}
-              onChange={this.handleSearchChange}
-              onEnterPress={this.handleSearch}
-              onInitialFetch={this.handleInitialFetch}
-            />
-            <Button text="Search" onClick={this.handleSearch} />
-          </div>
-          <Main isLoading={isLoading} items={items} error={error} />
-          <ThrowErrorButton />
-          <Listeners
-            searchQuery={searchQuery}
-            onDataFetched={this.handleDataFetched}
-            onError={this.handleError}
-            triggerFetch={triggerFetch}
-            endpoint="pokemon"
+      <div className="container">
+        <Header />
+        <div className="search-container">
+          <SearchInputField
+            placeholder="Search Pokémon"
+            value={searchQuery}
+            onChange={this.handleSearchChange}
+            onEnterPress={this.handleSearch}
+            onInitialFetch={this.handleInitialFetch}
           />
+          <Button text="Search" onClick={this.handleSearch} />
         </div>
-      </body>
+        <Main isLoading={isLoading} items={items} error={error} />
+        <ThrowErrorButton />
+        <Listeners
+          searchQuery={searchQuery}
+          onDataFetched={this.handleDataFetched}
+          onError={this.handleError}
+          triggerFetch={triggerFetch}
+        />
+      </div>
     );
   }
 }

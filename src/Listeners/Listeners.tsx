@@ -6,7 +6,6 @@ interface ListenersProps {
   searchQuery: string;
   onDataFetched: (data: Item[]) => void;
   triggerFetch: boolean;
-  endpoint: string;
   onError: (error: string) => void;
 }
 
@@ -35,10 +34,11 @@ class Listeners extends Component<ListenersProps, ListenersState> {
 
   handleFetchData = async () => {
     try {
-      const { searchQuery, endpoint } = this.props;
-      const result = await fetchData(searchQuery, endpoint, 0, 20);
+      const { searchQuery } = this.props;
+      const result = await fetchData(searchQuery);
       this.setState({ data: result, error: null });
       this.props.onDataFetched(result);
+      console.log('Data fetched:', result);
     } catch (error) {
       if (error instanceof Error) {
         this.setState({ error: error.message });
