@@ -9,18 +9,15 @@ export const fetchData = async (
   const queryString = searchQuery
     ? `q=name:${encodeURIComponent(searchQuery)}*`
     : '';
-  let url = `${baseUrl}?page=${page}&pageSize=${pageSize}`;
+  const urlParams = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+    ...(queryString && { q: queryString }),
+    ...(orderBy && { orderBy }),
+    ...(select && { select })
+  });
 
-  if (queryString) {
-    url += `&${queryString}`;
-  }
-  if (orderBy) {
-    url += `&orderBy=${orderBy}`;
-  }
-  if (select) {
-    url += `&select=${select}`;
-  }
-
+  const url = `${baseUrl}?${urlParams.toString()}`;
   console.log('Constructed URL:', url);
 
   try {
