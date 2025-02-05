@@ -41,7 +41,6 @@ const Result = ({ items, error }: ResultsProps) => {
           item.url
         ) : (
           <>
-            Description :{' '}
             {item.flavorText
               ? JSON.stringify(item.flavorText)
               : 'No information'}
@@ -54,6 +53,12 @@ const Result = ({ items, error }: ResultsProps) => {
   return (
     <div className="results-container">
       <table className="results-table">
+        <thead>
+          <tr>
+            <th>Pokémon Name</th>
+            <th>Pokémon Description</th>
+          </tr>
+        </thead>
         <tbody>
           {Array.isArray(items)
             ? items.map(renderTableRows)

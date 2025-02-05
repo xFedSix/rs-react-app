@@ -9,25 +9,14 @@ const ApiFetchData = ({
   orderBy = '',
   select = ''
 }) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
       try {
-        const result = await fetchData(
-          searchQuery,
-          page,
-          pageSize,
-          orderBy,
-          select
-        );
-        setData(result);
-        setError(null);
+        await fetchData(searchQuery, page, pageSize, orderBy, select);
       } catch (error) {
         console.error('Error occurred in fetchData:', error);
-        setError((error as Error).message);
       } finally {
         setLoading(false);
       }
@@ -40,16 +29,7 @@ const ApiFetchData = ({
     return <Loader />;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  return (
-    <div>
-      <h1>Fetched Data</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
+  return null;
 };
 
 export default ApiFetchData;
