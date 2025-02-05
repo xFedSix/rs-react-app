@@ -1,59 +1,75 @@
-import { Component } from 'react';
-import { fetchData } from '../API/ApiFetchData';
-import { Item } from '../components/Result/Result';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchData } from '../API/fetchData';
 
 interface ListenersProps {
-  searchQuery: string;
-  onDataFetched: (data: Item[]) => void;
   triggerFetch: boolean;
+  searchQuery: string;
+  page?: number;
+  pageSize?: number;
+  orderBy?: string;
+  select?: string;
+  onDataFetched: (data: any) => void;
   onError: (error: string) => void;
 }
 
-interface ListenersState {
-  data: Item[] | null;
-  error: string | null;
-}
+const Listeners: React.FC<ListenersProps> = ({
+  triggerFetch,
+  searchQuery,
+  page = 1,
+  pageSize = 9,
+  orderBy = '',
+  select = '',
+  onDataFetched,
+  onError
+}) => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-class Listeners extends Component<ListenersProps, ListenersState> {
-  constructor(props: ListenersProps) {
-    super(props);
-    this.state = {
-      data: null,
-      error: null
-    };
-  }
-
-  componentDidUpdate(prevProps: ListenersProps) {
-    if (
-      this.props.triggerFetch &&
-      prevProps.triggerFetch !== this.props.triggerFetch
-    ) {
-      this.handleFetchData();
-    }
-  }
-
-  handleFetchData = async () => {
+  const handleFetchData = useCallback(async () => {
     try {
-      const { searchQuery } = this.props;
-      const result = await fetchData(searchQuery);
-      this.setState({ data: result, error: null });
-      this.props.onDataFetched(result);
+      const result = await fetchData(
+        searchQuery,
+        page,
+        pageSize,
+        orderBy,
+        select
+      );
+      setData(result);
+      setError(null);
+      onDataFetched(result);
       console.log('Data fetched:', result);
     } catch (error) {
       if (error instanceof Error) {
-        this.setState({ error: error.message });
-        this.props.onError(error.message);
+        setError(error.message);
+        onError(error.message);
       } else {
         const errorMessage = 'Unknown error occurred';
-        this.setState({ error: errorMessage });
-        this.props.onError(errorMessage);
+        setError(errorMessage);
+        onError(errorMessage);
       }
     }
-  };
+  }, [searchQuery, page, pageSize, orderBy, select, onDataFetched, onError]);
 
-  render() {
-    return null;
-  }
-}
+  useEffect(() => {
+    if (triggerFetch) {
+      handleFetchData();
+    }
+  }, [
+    triggerFetch,
+    searchQuery,
+    page,
+    pageSize,
+    orderBy,
+    select,
+    handleFetchData
+  ]);
+
+  return (
+    <div>
+      {error && <p>Error: {error}</p>}
+      {data && <div>Data fetched successfully</div>}
+    </div>
+  );
+};
 
 export default Listeners;

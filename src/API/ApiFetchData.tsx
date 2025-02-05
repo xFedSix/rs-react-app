@@ -1,44 +1,55 @@
-export const fetchData = async (
+import { useState, useEffect } from 'react';
+import Loader from '../components/Loader/Loader';
+import { fetchData } from './fetchData';
+
+const ApiFetchData = ({
   searchQuery = '',
   page = 1,
   pageSize = 9,
   orderBy = '',
   select = ''
-) => {
-  const baseUrl = 'https://api.pokemontcg.io/v2/cards';
-  const queryString = searchQuery
-    ? `q=name:${encodeURIComponent(searchQuery)}*`
-    : '';
-  const urlParams = new URLSearchParams({
-    page: page.toString(),
-    pageSize: pageSize.toString(),
-    ...(queryString && { q: queryString }),
-    ...(orderBy && { orderBy }),
-    ...(select && { select })
-  });
+}) => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const url = `${baseUrl}?${urlParams.toString()}`;
-  console.log('Constructed URL:', url);
-
-  try {
-    const apiKey = import.meta.env.VITE_API_KEY;
-    if (!apiKey) {
-      throw new Error('API key is missing');
-    }
-    const response = await fetch(url, {
-      headers: {
-        'X-Api-Key': apiKey
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      try {
+        const result = await fetchData(
+          searchQuery,
+          page,
+          pageSize,
+          orderBy,
+          select
+        );
+        setData(result);
+        setError(null);
+      } catch (error) {
+        console.error('Error occurred in fetchData:', error);
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
       }
-    });
-    console.log('response:', response);
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.statusText}`);
-    }
+    };
 
-    const data = await response.json();
-    return data.data || data;
-  } catch (error) {
-    console.error('Error occurred in fetchData:', error);
-    throw error;
+    fetchDataAsync();
+  }, [searchQuery, page, pageSize, orderBy, select]);
+
+  if (loading) {
+    return <Loader />;
   }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      <h1>Fetched Data</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  );
 };
+
+export default ApiFetchData;

@@ -1,4 +1,3 @@
-import React from 'react';
 import './Result.scss';
 
 export interface Item {
@@ -16,7 +15,7 @@ export interface ResultsProps {
   error: string | null;
 }
 
-const Result: React.FC<ResultsProps> = ({ items, error }) => {
+const Result = ({ items, error }: ResultsProps) => {
   if (error) {
     return (
       <div className="results-container">
@@ -55,16 +54,10 @@ const Result: React.FC<ResultsProps> = ({ items, error }) => {
   return (
     <div className="results-container">
       <table className="results-table">
-        <thead>
-          <tr>
-            <th>Pokémon Name</th>
-            <th>Pokémon Description</th>
-          </tr>
-        </thead>
         <tbody>
           {Array.isArray(items)
             ? items.map(renderTableRows)
-            : renderTableRows(items as Item)}
+            : renderTableRows(items)}
         </tbody>
       </table>
     </div>

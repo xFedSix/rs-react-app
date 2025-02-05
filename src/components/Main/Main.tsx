@@ -1,7 +1,5 @@
-import React from 'react';
 import Loader from '../Loader/Loader';
-import Result from '../Result/Result';
-import { Item } from '../Result/Result';
+import Result, { Item } from '../Result/Result';
 
 export interface MainProps {
   isLoading: boolean;
@@ -9,7 +7,7 @@ export interface MainProps {
   error: string | null;
 }
 
-const Main: React.FC<MainProps> = ({ isLoading, items, error }) => (
+const Main = ({ isLoading, items, error }: MainProps) => (
   <section className="Results-content">
     <h2>Results</h2>
     {isLoading ? <Loader /> : <Result items={items} error={error} />}

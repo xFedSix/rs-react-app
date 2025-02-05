@@ -1,5 +1,5 @@
-import { Component, ReactNode } from 'react';
-import './SearchInputField.scss';
+import React, { useEffect } from 'react';
+import useSearchQuery from './useSearchQuery';
 
 interface SearchInputFieldProps {
   placeholder: string;
@@ -9,47 +9,46 @@ interface SearchInputFieldProps {
   onInitialFetch: () => void;
 }
 
-class SearchInputField extends Component<SearchInputFieldProps> {
-  componentDidMount() {
-    const savedQuery = localStorage.getItem('searchQuery');
-    if (savedQuery) {
-      this.props.onChange({
-        target: { value: savedQuery }
+const SearchInputField: React.FC<SearchInputFieldProps> = ({
+  placeholder,
+  value,
+  onChange,
+  onEnterPress,
+  onInitialFetch
+}) => {
+  const [searchQuery, handleChange] = useSearchQuery(value);
+
+  useEffect(() => {
+    if (searchQuery) {
+      onChange({
+        target: { value: searchQuery }
       } as React.ChangeEvent<HTMLInputElement>);
       setTimeout(() => {
-        this.props.onEnterPress();
+        onEnterPress();
       }, 0);
     } else {
-      this.props.onInitialFetch();
+      onInitialFetch();
     }
-  }
+  }, [searchQuery, onChange, onEnterPress, onInitialFetch]);
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchQuery = event.target.value;
-    localStorage.setItem('searchQuery', searchQuery);
-    this.props.onChange(event);
+  const handleKeyPress = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ): void => {
+    if (event.key === 'Enter') {
+      onEnterPress();
+    }
   };
 
-  render(): ReactNode {
-    const { placeholder, value } = this.props;
-    const handleKeyPress = (
-      event: React.KeyboardEvent<HTMLInputElement>
-    ): void => {
-      if (event.key === 'Enter') {
-        this.props.onEnterPress();
-      }
-    };
-    return (
-      <input
-        className="input-field"
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={this.handleChange}
-        onKeyDown={handleKeyPress}
-      />
-    );
-  }
-}
+  return (
+    <input
+      className="input-field"
+      type="text"
+      placeholder={placeholder}
+      value={searchQuery}
+      onChange={handleChange}
+      onKeyDown={handleKeyPress}
+    />
+  );
+};
 
 export default SearchInputField;
