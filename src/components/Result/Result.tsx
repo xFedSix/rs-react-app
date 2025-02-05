@@ -1,12 +1,13 @@
+import React from 'react';
 import './Result.scss';
 
 export interface Item {
   id: number | string;
   name: string;
-  url?: string;
-  base_happiness?: number;
-  capture_rate?: number;
-  color?: { name: string };
+  images: {
+    small: string;
+    large: string;
+  };
   flavorText: string;
 }
 
@@ -35,17 +36,12 @@ const Result = ({ items, error }: ResultsProps) => {
 
   const renderTableRows = (item: Item) => (
     <tr key={item.id}>
+      <td>
+        <img className="card-img" src={item.images.small} alt={item.name} />
+      </td>
       <td>{item.name}</td>
       <td>
-        {item.url ? (
-          item.url
-        ) : (
-          <>
-            {item.flavorText
-              ? JSON.stringify(item.flavorText)
-              : 'No information'}
-          </>
-        )}
+        {item.flavorText ? JSON.stringify(item.flavorText) : 'No information'}
       </td>
     </tr>
   );
@@ -53,12 +49,6 @@ const Result = ({ items, error }: ResultsProps) => {
   return (
     <div className="results-container">
       <table className="results-table">
-        <thead>
-          <tr>
-            <th>Pokémon Name</th>
-            <th>Pokémon Description</th>
-          </tr>
-        </thead>
         <tbody>
           {Array.isArray(items)
             ? items.map(renderTableRows)

@@ -64,12 +64,7 @@ const Listeners: React.FC<ListenersProps> = ({
     handleFetchData
   ]);
 
-  return (
-    <div>
-      {error && <p>Error: {error}</p>}
-      {data && <div>Data fetched successfully</div>}
-    </div>
-  );
+  return null;
 };
 
 export default Listeners;
