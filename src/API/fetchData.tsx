@@ -6,18 +6,11 @@ export const fetchData = async (
   select = ''
 ) => {
   const baseUrl = 'https://api.pokemontcg.io/v2/cards';
-  const queryString = searchQuery
-    ? `q=name:${encodeURIComponent(searchQuery)}*`
-    : '';
-  const urlParams = new URLSearchParams({
-    page: page.toString(),
-    pageSize: pageSize.toString(),
-    ...(queryString && { q: queryString }),
-    ...(orderBy && { orderBy }),
-    ...(select && { select })
-  });
+  const queryString = searchQuery ? `q=name:${searchQuery}*` : '';
+  const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${
+    queryString ? `&${queryString}` : ''
+  }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
 
-  const url = `${baseUrl}?${urlParams.toString()}`;
   console.log('Constructed URL:', url);
 
   try {
