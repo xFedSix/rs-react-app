@@ -16,6 +16,7 @@ import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
 import ItemDetails from './components/ItemDetails.tsx/ItemDetails';
+import NotFound from './components/NotFound/NotFound';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -142,6 +143,7 @@ const AppWrapper = () => (
   <Router>
     <Routes>
       <Route path="/" element={<App />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   </Router>
 );
