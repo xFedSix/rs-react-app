@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { fetchData } from '../API/fetchData';
 
 interface ListenersProps {
@@ -12,7 +12,7 @@ interface ListenersProps {
   onError: (error: string) => void;
 }
 
-const Listeners: React.FC<ListenersProps> = ({
+const useFetchData = ({
   triggerFetch,
   searchQuery,
   page = 1,
@@ -21,10 +21,7 @@ const Listeners: React.FC<ListenersProps> = ({
   select = '',
   onDataFetched,
   onError
-}) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState<string | null>(null);
-
+}: ListenersProps) => {
   const handleFetchData = useCallback(async () => {
     try {
       const result = await fetchData(
@@ -34,17 +31,13 @@ const Listeners: React.FC<ListenersProps> = ({
         orderBy,
         select
       );
-      setData(result);
-      setError(null);
       onDataFetched(result);
       console.log('Data fetched:', result);
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
         onError(error.message);
       } else {
         const errorMessage = 'Unknown error occurred';
-        setError(errorMessage);
         onError(errorMessage);
       }
     }
@@ -54,16 +47,11 @@ const Listeners: React.FC<ListenersProps> = ({
     if (triggerFetch) {
       handleFetchData();
     }
-  }, [
-    triggerFetch,
-    searchQuery,
-    page,
-    pageSize,
-    orderBy,
-    select,
-    handleFetchData
-  ]);
+  }, [triggerFetch, handleFetchData]);
+};
 
+const Listeners: React.FC<ListenersProps> = (props) => {
+  useFetchData(props);
   return null;
 };
 
