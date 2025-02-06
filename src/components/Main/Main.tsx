@@ -5,12 +5,18 @@ export interface MainProps {
   isLoading: boolean;
   items: Item[] | Item;
   error: string | null;
+  onItemClick: (item: Item) => void;
+  onClick: () => void;
 }
 
-const Main = ({ isLoading, items, error }: MainProps) => (
-  <section className="Results-content">
+const Main = ({ isLoading, items, error, onItemClick, onClick }: MainProps) => (
+  <section className="Results-content" onClick={onClick}>
     <h2>Results</h2>
-    {isLoading ? <Loader /> : <Result items={items} error={error} />}
+    {isLoading ? (
+      <Loader />
+    ) : (
+      <Result items={items} error={error} onItemClick={onItemClick} />
+    )}
   </section>
 );
 

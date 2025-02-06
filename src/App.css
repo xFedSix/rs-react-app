@@ -5,5 +5,14 @@
   text-align: center;
 }
 .container {
-  width: 50rem;
+  width: 100%;
+}
+.main-content {
+  display: flex;
+}
+
+.details-section {
+  width: 50%;
+  padding: 1rem;
+  border-left: 1px solid #ccc;
 }

@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+  useLocation
+} from 'react-router-dom';
 import Button from './components/Button/Button';
 import SearchInputField from './components/Search/SearchInputField';
 import './App.css';
@@ -8,6 +15,7 @@ import ThrowErrorButton from './components/Button/ThrowErrorButton';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
+import ItemDetails from './components/ItemDetails.tsx/ItemDetails';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +23,10 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [triggerFetch, setTriggerFetch] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -65,6 +77,29 @@ const App = () => {
     }
   }, [handleDataFetched, handleError]);
 
+  const handleItemClick = useCallback(
+    (item: Item) => {
+      setSelectedItem(item);
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set('details', item.id.toString());
+      navigate(`/?${searchParams.toString()}`);
+    },
+    [navigate, location.search]
+  );
+
+  const handleCloseDetails = useCallback(() => {
+    setSelectedItem(null);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.delete('details');
+    navigate(`/?${searchParams.toString()}`);
+  }, [navigate, location.search]);
+
+  const handleMainClick = useCallback(() => {
+    if (selectedItem) {
+      handleCloseDetails();
+    }
+  }, [selectedItem, handleCloseDetails]);
+
   return (
     <div className="container">
       <Header />
@@ -78,7 +113,20 @@ const App = () => {
         />
         <Button text="Search" onClick={handleSearch} />
       </div>
-      <Main isLoading={isLoading} items={items} error={error} />
+      <div className="main-content">
+        <Main
+          isLoading={isLoading}
+          items={items}
+          error={error}
+          onItemClick={handleItemClick}
+          onClick={handleMainClick}
+        />
+        {selectedItem && (
+          <div className="details-section">
+            <ItemDetails item={selectedItem} onClose={handleCloseDetails} />
+          </div>
+        )}
+      </div>
       <ThrowErrorButton />
       <Listeners
         searchQuery={searchQuery}
@@ -90,4 +138,12 @@ const App = () => {
   );
 };
 
-export default App;
+const AppWrapper = () => (
+  <Router>
+    <Routes>
+      <Route path="/" element={<App />} />
+    </Routes>
+  </Router>
+);
+
+export default AppWrapper;

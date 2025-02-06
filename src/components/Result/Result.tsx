@@ -13,9 +13,10 @@ export interface Item {
 export interface ResultsProps {
   items: Item[] | Item;
   error: string | null;
+  onItemClick: (item: Item) => void;
 }
 
-const Result = ({ items, error }: ResultsProps) => {
+const Result = ({ items, error, onItemClick }: ResultsProps) => {
   if (error) {
     return (
       <div className="results-container">
@@ -34,7 +35,7 @@ const Result = ({ items, error }: ResultsProps) => {
   }
 
   const renderTableRows = (item: Item) => (
-    <tr key={item.id}>
+    <tr key={item.id} onClick={() => onItemClick(item)}>
       <td>
         <img className="card-img" src={item.images.small} alt={item.name} />
       </td>
@@ -48,7 +49,14 @@ const Result = ({ items, error }: ResultsProps) => {
   return (
     <div className="results-container">
       <table className="results-table">
-        <tbody>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Pokémon Name</th>
+            <th>Pokémon Description</th>
+          </tr>
+        </thead>
+        <tbody className="results-table-body">
           {Array.isArray(items)
             ? items.map(renderTableRows)
             : renderTableRows(items)}
