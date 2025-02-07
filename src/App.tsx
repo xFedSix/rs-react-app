@@ -16,6 +16,7 @@ import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
 import ItemDetails from './components/ItemDetails.tsx/ItemDetails';
+import Pagination from './components/Pagination/Pagination';
 import NotFound from './components/NotFound/NotFound';
 
 const App = () => {
@@ -25,6 +26,8 @@ const App = () => {
   const [triggerFetch, setTriggerFetch] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,6 +39,12 @@ const App = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    setCurrentPage(page);
+  }, [location.search]);
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,12 +60,16 @@ const App = () => {
     setTriggerFetch(true);
   }, [searchQuery]);
 
-  const handleDataFetched = useCallback((data: Item[]) => {
-    setItems(data);
-    setIsLoading(false);
-    setTriggerFetch(false);
-    setError(null);
-  }, []);
+  const handleDataFetched = useCallback(
+    ({ data, totalCount }: { data: Item[]; totalCount: number }) => {
+      setItems(data);
+      setIsLoading(false);
+      setTriggerFetch(false);
+      setError(null);
+      setTotalPages(Math.ceil(totalCount / 9));
+    },
+    []
+  );
 
   const handleError = useCallback((error: string) => {
     setError(error);
@@ -67,8 +80,8 @@ const App = () => {
   const handleInitialFetch = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await fetchData('');
-      handleDataFetched(data);
+      const { data, totalCount } = await fetchData('');
+      handleDataFetched({ data, totalCount });
     } catch (error) {
       if (error instanceof Error) {
         handleError(error.message);
@@ -101,6 +114,17 @@ const App = () => {
     }
   }, [selectedItem, handleCloseDetails]);
 
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set('page', page.toString());
+      navigate(`/?${searchParams.toString()}`);
+      setTriggerFetch(true);
+    },
+    [navigate, location.search]
+  );
+
   return (
     <div className="container">
       <Header />
@@ -128,9 +152,17 @@ const App = () => {
           </div>
         )}
       </div>
+      {!isLoading && items.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
       <ThrowErrorButton />
       <Listeners
         searchQuery={searchQuery}
+        page={currentPage}
         onDataFetched={handleDataFetched}
         onError={handleError}
         triggerFetch={triggerFetch}

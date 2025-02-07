@@ -29,7 +29,10 @@ export const fetchData = async (
     }
 
     const result = await response.json();
-    return result.data || result;
+    return {
+      data: result.data || result,
+      totalCount: result.totalCount || result.count || 0
+    };
   } catch (error) {
     console.error('Error occurred in fetchData:', error);
     throw error;
