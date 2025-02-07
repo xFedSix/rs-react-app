@@ -11,7 +11,6 @@ import SearchInputField from './components/Search/SearchInputField';
 import './App.css';
 import Listeners from './Listeners/Listeners';
 import { Item } from './components/Result/Result';
-import ThrowErrorButton from './components/Button/ThrowErrorButton';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
@@ -56,6 +55,7 @@ const App = () => {
   const handleSearch = useCallback(() => {
     const trimmedQuery = searchQuery.trim();
     setSearchQuery(trimmedQuery);
+    setCurrentPage(1);
     setIsLoading(true);
     setTriggerFetch(true);
   }, [searchQuery]);
@@ -159,7 +159,6 @@ const App = () => {
           onPageChange={handlePageChange}
         />
       )}
-      <ThrowErrorButton />
       <Listeners
         searchQuery={searchQuery}
         page={currentPage}
