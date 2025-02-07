@@ -14,11 +14,11 @@ import { Item } from './components/Result/Result';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
-import ItemDetails from './components/ItemDetails.tsx/ItemDetails';
+import ItemDetails from './components/ItemDetails/ItemDetails';
 import Pagination from './components/Pagination/Pagination';
 import NotFound from './components/NotFound/NotFound';
 
-const App = () => {
+const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
