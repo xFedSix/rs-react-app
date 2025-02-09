@@ -7,7 +7,7 @@ export interface Item {
     small: string;
     large: string;
   };
-  flavorText: string;
+  flavorText: string | undefined;
 }
 
 export interface ResultsProps {
@@ -30,7 +30,7 @@ const Result = ({ items, error, onItemClick }: ResultsProps) => {
       </div>
     );
   }
-  if (!items) {
+  if (!items || (Array.isArray(items) && items.length === 0)) {
     return <div>No results found.</div>;
   }
 
@@ -41,7 +41,9 @@ const Result = ({ items, error, onItemClick }: ResultsProps) => {
       </td>
       <td>{item.name}</td>
       <td>
-        {item.flavorText ? JSON.stringify(item.flavorText) : 'No information'}
+        {item.flavorText && item.flavorText.trim() !== ''
+          ? item.flavorText
+          : 'No information'}
       </td>
     </tr>
   );

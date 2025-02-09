@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   render,
   screen,
@@ -11,13 +10,11 @@ import { describe, it, expect, vi } from 'vitest';
 import ItemDetails from './ItemDetails';
 import { Item } from '../Result/Result';
 
-// Mock Loader component
 vi.mock('../Loader/Loader', () => ({
   __esModule: true,
   default: () => <div>Loading...</div>
 }));
 
-// Mock fetch function
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 

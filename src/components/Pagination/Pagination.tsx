@@ -12,45 +12,64 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange
 }) => {
+  const isTotalPagesValid = totalPages > 0;
+  const isInvalidPage = currentPage > totalPages || currentPage < 1;
+
   const handleFirst = () => {
-    if (currentPage > 1) {
+    if (isTotalPagesValid && currentPage > 1) {
       onPageChange(1);
     }
   };
 
   const handlePrevious = () => {
-    if (currentPage > 1) {
+    if (isTotalPagesValid && currentPage > 1) {
       onPageChange(currentPage - 1);
     }
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
+    if (isTotalPagesValid && currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
   };
 
   const handleLast = () => {
-    if (currentPage < totalPages) {
+    if (isTotalPagesValid && currentPage < totalPages) {
       onPageChange(totalPages);
     }
   };
 
   return (
     <div className="pagination">
-      <button onClick={handleFirst} disabled={currentPage === 1}>
+      <button
+        onClick={handleFirst}
+        disabled={!isTotalPagesValid || currentPage === 1 || isInvalidPage}
+      >
         First
       </button>
-      <button onClick={handlePrevious} disabled={currentPage === 1}>
+      <button
+        onClick={handlePrevious}
+        disabled={!isTotalPagesValid || currentPage === 1 || isInvalidPage}
+      >
         Previous
       </button>
       <span>
         Page {currentPage} of {totalPages}
       </span>
-      <button onClick={handleNext} disabled={currentPage === totalPages}>
+      <button
+        onClick={handleNext}
+        disabled={
+          !isTotalPagesValid || currentPage === totalPages || isInvalidPage
+        }
+      >
         Next
       </button>
-      <button onClick={handleLast} disabled={currentPage === totalPages}>
+      <button
+        onClick={handleLast}
+        disabled={
+          !isTotalPagesValid || currentPage === totalPages || isInvalidPage
+        }
+      >
         Last
       </button>
     </div>
