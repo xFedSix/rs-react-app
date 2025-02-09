@@ -6,7 +6,7 @@ import {
   act
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ItemDetails from './ItemDetails';
 import { Item } from '../Result/Result';
 
@@ -16,13 +16,13 @@ vi.mock('../Loader/Loader', () => ({
 }));
 
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+vi.stubGlobal('fetch', mockFetch);
 
 describe('ItemDetails', () => {
   const mockItem: Item = {
     id: '123',
     name: 'Test Item',
-    images: { large: 'test-image-url' },
+    images: { large: 'test-image-url', small: 'test-small-image-url' },
     flavorText: 'Test flavor text'
   };
 

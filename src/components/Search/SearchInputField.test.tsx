@@ -2,18 +2,17 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SearchInputField from './SearchInputField';
 
-// Mock local storage
 const localStorageMock = (() => {
-  let store = {};
+  let store: Record<string, string> = {};
   return {
-    getItem: (key) => store[key] || null,
-    setItem: (key, value) => {
-      store[key] = value.toString();
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string | number, value: { toString: () => any }) => {
+      store[key as string] = value.toString();
     },
     clear: () => {
       store = {};
     },
-    removeItem: (key) => {
+    removeItem: (key: string | number) => {
       delete store[key];
     }
   };
