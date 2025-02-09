@@ -1,59 +1,58 @@
-import { Component } from 'react';
-import { fetchData } from '../API/ApiFetchData';
-import { Item } from '../components/Result/Result';
+import { useEffect, useCallback } from 'react';
+import { fetchData } from '../API/fetchData';
 
 interface ListenersProps {
-  searchQuery: string;
-  onDataFetched: (data: Item[]) => void;
   triggerFetch: boolean;
-  endpoint: string;
+  searchQuery: string;
+  page?: number;
+  pageSize?: number;
+  orderBy?: string;
+  select?: string;
+  onDataFetched: (data: any) => void;
   onError: (error: string) => void;
 }
 
-interface ListenersState {
-  data: Item[] | null;
-  error: string | null;
-}
-
-class Listeners extends Component<ListenersProps, ListenersState> {
-  constructor(props: ListenersProps) {
-    super(props);
-    this.state = {
-      data: null,
-      error: null
-    };
-  }
-
-  componentDidUpdate(prevProps: ListenersProps) {
-    if (
-      this.props.triggerFetch &&
-      prevProps.triggerFetch !== this.props.triggerFetch
-    ) {
-      this.handleFetchData();
-    }
-  }
-
-  handleFetchData = async () => {
+const useFetchData = ({
+  triggerFetch,
+  searchQuery,
+  page = 1,
+  pageSize = 9,
+  orderBy = '',
+  select = '',
+  onDataFetched,
+  onError
+}: ListenersProps) => {
+  const handleFetchData = useCallback(async () => {
     try {
-      const { searchQuery, endpoint } = this.props;
-      const result = await fetchData(searchQuery, endpoint, 0, 20);
-      this.setState({ data: result, error: null });
-      this.props.onDataFetched(result);
+      const result = await fetchData(
+        searchQuery,
+        page,
+        pageSize,
+        orderBy,
+        select
+      );
+      onDataFetched(result);
+      console.log('Data fetched:', result);
     } catch (error) {
       if (error instanceof Error) {
-        this.setState({ error: error.message });
-        this.props.onError(error.message);
+        onError(error.message);
       } else {
         const errorMessage = 'Unknown error occurred';
-        this.setState({ error: errorMessage });
-        this.props.onError(errorMessage);
+        onError(errorMessage);
       }
     }
-  };
+  }, [searchQuery, page, pageSize, orderBy, select, onDataFetched, onError]);
 
-  render() {
-    return null;
-  }
-}
+  useEffect(() => {
+    if (triggerFetch) {
+      handleFetchData();
+    }
+  }, [triggerFetch, handleFetchData]);
+};
+
+const Listeners: React.FC<ListenersProps> = (props) => {
+  useFetchData(props);
+  return null;
+};
 
 export default Listeners;

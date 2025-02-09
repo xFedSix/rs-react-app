@@ -1,23 +1,35 @@
-export const fetchData = async (
-  searchQuery: string,
-  endpoint: string,
-  offset: number,
-  limit: number
-) => {
-  let url = searchQuery
-    ? `https://pokeapi.co/api/v2/${endpoint}/${searchQuery}`
-    : `https://pokeapi.co/api/v2/${endpoint}?offset=${offset}&limit=${limit}`;
+import { useState, useEffect } from 'react';
+import Loader from '../components/Loader/Loader';
+import { fetchData } from './fetchData';
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+const ApiFetchData = ({
+  searchQuery = '',
+  page = 1,
+  pageSize = 9,
+  orderBy = '',
+  select = ''
+}) => {
+  const [loading, setLoading] = useState(true);
 
-    const data = await response.json();
-    return data.results || data;
-  } catch (error) {
-    console.error('Error occurred in fetchData:', error);
-    throw error;
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      try {
+        await fetchData(searchQuery, page, pageSize, orderBy, select);
+      } catch (error) {
+        console.error('Error occurred in fetchData:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDataAsync();
+  }, [searchQuery, page, pageSize, orderBy, select]);
+
+  if (loading) {
+    return <Loader />;
   }
+
+  return null;
 };
+
+export default ApiFetchData;

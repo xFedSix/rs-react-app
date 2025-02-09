@@ -20,4 +20,15 @@
 .results-table th {
   background-color: #f2f2f2;
   text-align: center;
-}/*# sourceMappingURL=Result.css.map */
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+
+.results-table-body {
+  cursor: pointer;
+} /*# sourceMappingURL=Result.css.map */

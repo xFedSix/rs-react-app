@@ -1,4 +1,5 @@
-import { Component, ReactNode } from 'react';
+import React, { useEffect } from 'react';
+import useSearchQuery from './useSearchQuery';
 import './SearchInputField.scss';
 
 interface SearchInputFieldProps {
@@ -9,47 +10,40 @@ interface SearchInputFieldProps {
   onInitialFetch: () => void;
 }
 
-class SearchInputField extends Component<SearchInputFieldProps> {
-  componentDidMount() {
-    const savedQuery = localStorage.getItem('searchQuery');
-    if (savedQuery) {
-      this.props.onChange({
-        target: { value: savedQuery }
-      } as React.ChangeEvent<HTMLInputElement>);
-      setTimeout(() => {
-        this.props.onEnterPress();
-      }, 0);
-    } else {
-      this.props.onInitialFetch();
-    }
-  }
+const SearchInputField: React.FC<SearchInputFieldProps> = ({
+  placeholder,
+  value,
+  onChange,
+  onEnterPress,
+  onInitialFetch
+}) => {
+  const [searchQuery, handleChange] = useSearchQuery(value);
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchQuery = event.target.value;
-    localStorage.setItem('searchQuery', searchQuery);
-    this.props.onChange(event);
+  useEffect(() => {
+    onInitialFetch();
+  }, [onInitialFetch]);
+
+  const handleKeyPress = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ): void => {
+    if (event.key === 'Enter') {
+      onEnterPress();
+    }
   };
 
-  render(): ReactNode {
-    const { placeholder, value } = this.props;
-    const handleKeyPress = (
-      event: React.KeyboardEvent<HTMLInputElement>
-    ): void => {
-      if (event.key === 'Enter') {
-        this.props.onEnterPress();
-      }
-    };
-    return (
-      <input
-        className="input-field"
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={this.handleChange}
-        onKeyDown={handleKeyPress}
-      />
-    );
-  }
-}
+  return (
+    <input
+      className="input-field"
+      type="text"
+      placeholder={placeholder}
+      value={searchQuery}
+      onChange={(event) => {
+        handleChange(event);
+        onChange(event);
+      }}
+      onKeyDown={handleKeyPress}
+    />
+  );
+};
 
 export default SearchInputField;

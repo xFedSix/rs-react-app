@@ -1,20 +1,22 @@
-import React from 'react';
 import './Result.scss';
 
 export interface Item {
+  id: number | string;
   name: string;
-  url?: string;
-  base_happiness?: number;
-  capture_rate?: number;
-  color?: { name: string };
+  images: {
+    small: string;
+    large: string;
+  };
+  flavorText: string | undefined;
 }
 
 export interface ResultsProps {
   items: Item[] | Item;
   error: string | null;
+  onItemClick: (item: Item) => void;
 }
 
-const Result: React.FC<ResultsProps> = ({ items, error }) => {
+const Result = ({ items, error, onItemClick }: ResultsProps) => {
   if (error) {
     return (
       <div className="results-container">
@@ -28,26 +30,20 @@ const Result: React.FC<ResultsProps> = ({ items, error }) => {
       </div>
     );
   }
-
-  if (!items) {
+  if (!items || (Array.isArray(items) && items.length === 0)) {
     return <div>No results found.</div>;
   }
 
   const renderTableRows = (item: Item) => (
-    <tr key={item.name}>
+    <tr key={item.id} onClick={() => onItemClick(item)}>
+      <td>
+        <img className="card-img" src={item.images.small} alt={item.name} />
+      </td>
       <td>{item.name}</td>
       <td>
-        {item.url ? (
-          item.url
-        ) : (
-          <>
-            Base Happiness:{' '}
-            {item.base_happiness ? item.base_happiness : 'No information'},
-            Capture Rate:{' '}
-            {item.capture_rate ? item.capture_rate : 'No information'}, Color:{' '}
-            {item.color ? item.color.name : 'No information'}
-          </>
-        )}
+        {item.flavorText && item.flavorText.trim() !== ''
+          ? item.flavorText
+          : 'No information'}
       </td>
     </tr>
   );
@@ -57,14 +53,15 @@ const Result: React.FC<ResultsProps> = ({ items, error }) => {
       <table className="results-table">
         <thead>
           <tr>
+            <th>Image</th>
             <th>Pokémon Name</th>
             <th>Pokémon Description</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="results-table-body">
           {Array.isArray(items)
             ? items.map(renderTableRows)
-            : renderTableRows(items as Item)}
+            : renderTableRows(items)}
         </tbody>
       </table>
     </div>
