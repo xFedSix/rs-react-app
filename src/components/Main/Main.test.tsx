@@ -1,10 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi } from 'vitest';
 import Main, { MainProps } from './Main';
-import Loader from '../Loader/Loader';
-import Result, { Item } from '../Result/Result';
+
+import { Item } from '../Result/Result';
 
 // Mock Loader and Result components
 vi.mock('../Loader/Loader', () => ({
@@ -46,8 +45,24 @@ vi.mock('../Result/Result', () => ({
 
 describe('Main', () => {
   const mockItems: Item[] = [
-    { id: '1', name: 'Item 1' },
-    { id: '2', name: 'Item 2' }
+    {
+      id: '1',
+      name: 'Item 1',
+      images: {
+        small: '',
+        large: ''
+      },
+      flavorText: undefined
+    },
+    {
+      id: '2',
+      name: 'Item 2',
+      images: {
+        small: '',
+        large: ''
+      },
+      flavorText: undefined
+    }
   ];
 
   const defaultProps: MainProps = {
