@@ -195,7 +195,7 @@ const ItemDetailsWrapper: React.FC = () => {
   const handleCloseDetails = useCallback(() => {
     setSelectedItem(null);
     navigate('/');
-  }, []);
+  }, [navigate]);
 
   return selectedItem ? (
     <ItemDetails item={selectedItem} onClose={handleCloseDetails} />
