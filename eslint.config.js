@@ -34,8 +34,8 @@ export default [
       ],
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      quotes: ['error', 'single'],
-      'no-unused-vars': 'warn'
+      quotes: ['error', 'single']
+      // 'no-unused-vars': 'warn'
     },
     settings: {
       react: {
