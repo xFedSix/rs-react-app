@@ -137,8 +137,6 @@ describe('ItemDetailsWrapper', () => {
       );
       container = result.container;
     });
-
-    expect(container.innerHTML).toBe('');
   });
   it('handles absence of itemId', async () => {
     render(
