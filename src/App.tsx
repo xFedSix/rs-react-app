@@ -15,9 +15,9 @@ import { Item } from './components/Result/Result';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
-import ItemDetails from './components/ItemDetails/ItemDetails';
 import Pagination from './components/Pagination/Pagination';
 import NotFound from './components/NotFound/NotFound';
+import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,17 +26,15 @@ const App: React.FC = () => {
   const [triggerFetch, setTriggerFetch] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -94,16 +92,18 @@ const App: React.FC = () => {
 
   const handleItemClick = useCallback(
     (item: Item) => {
-      setSelectedItem(item);
-      navigate(`/details/${item.id}`);
+      const newSearchParams = new URLSearchParams(location.search);
+      newSearchParams.set('details', item.id.toString());
+      navigate({ search: newSearchParams.toString() });
     },
-    [navigate]
+    [navigate, location.search]
   );
 
   const handleCloseDetails = useCallback(() => {
-    setSelectedItem(null);
-    navigate('/');
-  }, [navigate]);
+    const newSearchParams = new URLSearchParams(location.search);
+    newSearchParams.delete('details');
+    navigate({ search: newSearchParams.toString() });
+  }, [navigate, location.search]);
 
   const handleMainClick = useCallback(() => {
     if (selectedItem) {
@@ -135,15 +135,19 @@ const App: React.FC = () => {
         />
         <Button text="Search" onClick={handleSearch} />
       </div>
-      <div className="main-content">
-        <Main
-          isLoading={isLoading}
-          items={items}
-          error={error}
-          onItemClick={handleItemClick}
-          onClick={handleMainClick}
-        />
-        <Outlet />
+      <div className="split-view">
+        <div className="main-content" onClick={handleMainClick}>
+          <Main
+            isLoading={isLoading}
+            items={items}
+            error={error}
+            onItemClick={handleItemClick}
+            onClick={handleMainClick}
+          />
+        </div>
+        <div className="details-panel">
+          <Outlet />
+        </div>
       </div>
       {!isLoading && items.length > 0 && (
         <Pagination
@@ -168,38 +172,12 @@ const AppWrapper: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<App />}>
-          <Route path="details/:id" element={<ItemDetailsWrapper />} />
+          <Route index element={<ItemDetailsWrapper />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>
   );
-};
-
-const ItemDetailsWrapper: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
-  useEffect(() => {
-    const itemId = location.pathname.split('/').pop();
-    if (itemId) {
-      const fetchItemDetails = async (id: string) => {
-        const { data } = await fetchData(id);
-        setSelectedItem(data);
-      };
-      fetchItemDetails(itemId);
-    }
-  }, [location.pathname]);
-
-  const handleCloseDetails = useCallback(() => {
-    setSelectedItem(null);
-    navigate('/');
-  }, [navigate]);
-
-  return selectedItem ? (
-    <ItemDetails item={selectedItem} onClose={handleCloseDetails} />
-  ) : null;
 };
 
 export default AppWrapper;
