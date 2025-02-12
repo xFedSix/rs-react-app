@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ItemDetails from './ItemDetails';
 import Loader from '../Loader/Loader';
@@ -9,6 +9,7 @@ const ItemDetailsWrapper: React.FC = () => {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const searchParams = new URLSearchParams(location.search);
   const itemId = searchParams.get('details');
@@ -20,8 +21,16 @@ const ItemDetailsWrapper: React.FC = () => {
           `https://api.pokemontcg.io/v2/cards/${itemId}`
         );
         const data = await response.json();
-        setSelectedItem(data.data || null);
+        if (data.error) {
+          console.error('Error fetching item details:', data.error);
+          setError('Error loading details');
+          setSelectedItem(null);
+        } else {
+          setSelectedItem(data.data);
+        }
       } catch (error) {
+        console.error('Error fetching item details:', error);
+        setError('Error loading details');
         setSelectedItem(null);
       } finally {
         setLoading(false);
@@ -29,29 +38,26 @@ const ItemDetailsWrapper: React.FC = () => {
     };
 
     if (itemId) {
-      setLoading(true);
       fetchItemDetails();
     } else {
       setLoading(false);
     }
   }, [itemId]);
 
-  const handleClose = () => {
-    const newSearchParams = new URLSearchParams(location.search);
-    newSearchParams.delete('details');
-    navigate({ search: newSearchParams.toString() });
-  };
+  const handleCloseDetails = useCallback(() => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.delete('details');
+    navigate(`/?${searchParams.toString()}`);
+  }, [navigate, location.search]);
 
   if (!itemId) return null;
   if (loading) return <Loader />;
+  if (error) return <div>{error}</div>;
 
   return selectedItem ? (
-    <ItemDetails item={selectedItem} onClose={handleClose} />
+    <ItemDetails item={selectedItem} onClose={handleCloseDetails} />
   ) : (
-    <div className="error-panel">
-      Error loading details
-      <button onClick={handleClose}>Close</button>
-    </div>
+    <div>No details available.</div>
   );
 };
 
