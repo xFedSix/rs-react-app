@@ -8,8 +8,6 @@ export interface MainProps {
   onItemClick: (item: Item) => void;
   onClick: () => void;
   isLoading: boolean;
-  items: Item[] | Item;
-  error: string | null;
 }
 
 const Main = ({ onItemClick, onClick }: MainProps) => {

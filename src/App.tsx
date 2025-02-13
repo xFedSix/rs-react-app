@@ -18,18 +18,19 @@ import Main from './components/Main/Main';
 import Pagination from './components/Pagination/Pagination';
 import NotFound from './components/NotFound/NotFound';
 import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
+import { useDispatch } from 'react-redux';
+import { setLoading, setItems, setError } from './Store/resultsSlice';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [triggerFetch, setTriggerFetch] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [selectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,33 +56,38 @@ const App: React.FC = () => {
     const trimmedQuery = searchQuery.trim();
     setSearchQuery(trimmedQuery);
     setCurrentPage(1);
-    setIsLoading(true);
+    dispatch(setLoading(true));
     setTriggerFetch(true);
-  }, [searchQuery]);
+  }, [dispatch, searchQuery]);
 
   const handleDataFetched = useCallback(
     ({ data, totalCount }: { data: Item[]; totalCount: number }) => {
-      setItems(data);
-      setIsLoading(false);
+      dispatch(setItems(data));
+      dispatch(setLoading(false));
+      dispatch(setError(null));
       setTriggerFetch(false);
-      setError(null);
       setTotalPages(Math.ceil(totalCount / 9));
     },
-    []
+    [dispatch]
   );
 
-  const handleError = useCallback((error: string) => {
-    setError(error);
-    setIsLoading(false);
-    setTriggerFetch(false);
-  }, []);
+  const handleError = useCallback(
+    (error: string) => {
+      setError(error);
+      dispatch(setLoading(false));
+      setTriggerFetch(false);
+    },
+    [dispatch]
+  );
 
   const handleInitialFetch = useCallback(async () => {
-    console.log('Initial fetch');
-
-    setIsLoading(true);
+    dispatch(setLoading(true));
     try {
       const { data, totalCount } = await fetchData('');
+      dispatch(setItems(data));
+      dispatch(setLoading(false));
+      dispatch(setError(null));
+      setTotalPages(Math.ceil(totalCount / 9));
       handleDataFetched({ data, totalCount });
     } catch (error) {
       if (error instanceof Error) {
@@ -90,7 +96,7 @@ const App: React.FC = () => {
         handleError(String(error));
       }
     }
-  }, [handleDataFetched, handleError]);
+  }, [dispatch, handleDataFetched, handleError]);
 
   const handleItemClick = useCallback(
     (item: Item) => {
@@ -141,8 +147,6 @@ const App: React.FC = () => {
         <div className="main-content" onClick={handleMainClick}>
           <Main
             isLoading={isLoading}
-            items={items}
-            error={error}
             onItemClick={handleItemClick}
             onClick={handleMainClick}
           />
@@ -151,7 +155,7 @@ const App: React.FC = () => {
           <Outlet />
         </div>
       </div>
-      {!isLoading && items.length > 0 && (
+      {!isLoading && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
