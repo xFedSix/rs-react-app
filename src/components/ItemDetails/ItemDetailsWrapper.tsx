@@ -22,14 +22,12 @@ const ItemDetailsWrapper: React.FC = () => {
         );
         const data = await response.json();
         if (data.error) {
-          console.error('Error fetching item details:', data.error);
           setError('Error loading details');
           setSelectedItem(null);
         } else {
           setSelectedItem(data.data);
         }
       } catch (error) {
-        console.error('Error fetching item details:', error);
         setError('Error loading details');
         setSelectedItem(null);
       } finally {

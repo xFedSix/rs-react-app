@@ -25,10 +25,7 @@ const Result = ({ onItemClick }: ResultsProps) => {
     (state: RootState) => state.results
   );
 
-  useEffect(() => {
-    console.log('Result component - items updated:', items);
-    console.log('Result component - error updated:', error);
-  }, [items, error]);
+  useEffect(() => {}, [items, error]);
 
   if (error) {
     return (

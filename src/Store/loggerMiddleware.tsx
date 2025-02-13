@@ -1,10 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 
-const loggerMiddleware: Middleware = (storeAPI) => (next) => (action) => {
-  console.log('Dispatching action:', action);
-  const result = next(action);
-  console.log('Next state:', storeAPI.getState());
-  return result;
+const loggerMiddleware: Middleware = () => (next) => (action) => {
+  return next(action);
 };
 
 export default loggerMiddleware;

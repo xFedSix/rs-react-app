@@ -13,10 +13,7 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('Item passed to ItemDetails:', item);
-
     if (!item || !item.id) {
-      console.error('Invalid item:', item);
       setLoading(false);
       return;
     }
@@ -27,15 +24,12 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
           `https://api.pokemontcg.io/v2/cards/${item.id}`
         );
         const data = await response.json();
-        console.log('Fetched data:', data);
         if (data.error) {
-          console.error('Error fetching item details:', data.error);
           setDetails(null);
         } else {
           setDetails(data.data);
         }
       } catch (error) {
-        console.error('Error fetching item details:', error);
       } finally {
         setLoading(false);
       }

@@ -11,8 +11,6 @@ export const fetchData = async (
     queryString ? `&${queryString}` : ''
   }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
 
-  console.log('Constructed URL:', url);
-
   try {
     const apiKey = import.meta.env.VITE_API_KEY;
     const response = await fetch(url, {
@@ -26,10 +24,8 @@ export const fetchData = async (
     }
 
     const data = await response.json();
-    console.log('Response:', data);
     return data;
   } catch (error) {
-    console.error('Fetch error:', error);
     throw error;
   }
 };

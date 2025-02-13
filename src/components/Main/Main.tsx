@@ -14,11 +14,7 @@ const Main = ({ onItemClick, onClick }: MainProps) => {
   const { items, isLoading, error } = useSelector(
     (state: RootState) => state.results
   );
-  console.log('Main component - items:', items);
-  console.log('Main component - error:', error);
-  useEffect(() => {
-    console.log('Main component - state updated:', { items, error, isLoading });
-  }, [items, error, isLoading]);
+  useEffect(() => {}, [items, error, isLoading]);
 
   return (
     <section className="Results-content" onClick={onClick}>

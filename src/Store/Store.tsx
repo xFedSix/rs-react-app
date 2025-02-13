@@ -30,15 +30,12 @@ const resultsSlice = createSlice({
   initialState,
   reducers: {
     setItems: (state, action) => {
-      console.log('Set items:', action.payload);
       state.items = action.payload;
     },
     setError: (state, action) => {
-      console.log('Set error:', action.payload);
       state.error = action.payload;
     },
     updateSelectedItems: (state, action) => {
-      console.log('Update selected items:', action.payload);
       state.selectedItems = action.payload;
     }
   }
@@ -47,18 +44,9 @@ const resultsSlice = createSlice({
 export const { setItems, setError, updateSelectedItems } = resultsSlice.actions;
 export default resultsSlice.reducer;
 
-interface CustomLoggerMiddlewareAPI {
-  getState: () => RootState;
-  dispatch: (action: any) => void;
-}
-
 const customLoggerMiddleware =
-  (store: CustomLoggerMiddlewareAPI) =>
-  (next: (action: any) => any) =>
-  (action: any) => {
-    console.log('Dispatching', action);
+  () => (next: (action: any) => any) => (action: any) => {
     let result = next(action);
-    console.log('Next state', store.getState());
     return result;
   };
 

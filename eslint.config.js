@@ -26,6 +26,7 @@ export default [
       '@typescript-eslint': tsPlugin
     },
     rules: {
+      'no-console': 'warn',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
@@ -35,7 +36,6 @@ export default [
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       quotes: ['error', 'single']
-      // 'no-unused-vars': 'warn'
     },
     settings: {
       react: {
