@@ -16,6 +16,7 @@ import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
 import Pagination from './components/Pagination/Pagination';
+import Flyout from './components/Flyout/Flyout';
 import NotFound from './components/NotFound/NotFound';
 import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
 import { useDispatch } from 'react-redux';
@@ -169,6 +170,8 @@ const App: React.FC = () => {
         onError={handleError}
         triggerFetch={triggerFetch}
       />
+
+      <Flyout />
     </div>
   );
 };

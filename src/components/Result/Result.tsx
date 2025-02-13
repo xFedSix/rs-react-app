@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSelectedItems } from '../../Store/Store';
 import './Result.scss';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface Item {
   id: number | string;
@@ -14,8 +14,6 @@ export interface Item {
 }
 
 export interface ResultsProps {
-  items: Item[] | Item;
-  error: string | null;
   onItemClick: (item: Item) => void;
 }
 
@@ -24,8 +22,17 @@ const Result = ({ onItemClick }: ResultsProps) => {
   const { items, error, selectedItems } = useSelector(
     (state: RootState) => state.results
   );
-
-  useEffect(() => {}, [items, error]);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  useEffect(() => {
+    if (Array.isArray(items)) {
+      setSelectAllChecked(
+        items.length > 0 &&
+          items.every((item) =>
+            selectedItems.some((selected) => selected.id === item.id)
+          )
+      );
+    }
+  }, [items, selectedItems]);
 
   if (error) {
     return (
@@ -40,19 +47,27 @@ const Result = ({ onItemClick }: ResultsProps) => {
       </div>
     );
   }
-
   if (!items || (Array.isArray(items) && items.length === 0)) {
     return <div>No results found.</div>;
   }
 
   const renderTableRows = (item: Item) => (
-    <tr key={item.id} onClick={() => onItemClick(item)}>
-      <td>
+    <tr
+      key={item.id}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest('.form-check')) {
+          e.stopPropagation();
+        } else {
+          onItemClick(item);
+        }
+      }}
+    >
+      <td onClick={(e) => e.stopPropagation()}>
         <div className="form-check">
           <input
             className="form-check-input"
             type="checkbox"
-            value=""
+            checked={selectedItems.some((selected) => selected.id === item.id)}
             id={`pokemon-${item.id}`}
             onChange={(e) => {
               if (e.target && e.target.checked) {
@@ -85,7 +100,30 @@ const Result = ({ onItemClick }: ResultsProps) => {
       </td>
     </tr>
   );
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAllChecked(checked);
+    if (checked && Array.isArray(items)) {
+      const currentPageItems = items as Item[];
+      const newSelection = [...selectedItems];
 
+      currentPageItems.forEach((item) => {
+        if (!selectedItems.some((selected) => selected.id === item.id)) {
+          newSelection.push(item);
+        }
+      });
+
+      dispatch(updateSelectedItems(newSelection));
+    } else {
+      if (Array.isArray(items)) {
+        const currentPageIds = (items as Item[]).map((item) => item.id);
+        dispatch(
+          updateSelectedItems(
+            selectedItems.filter((item) => !currentPageIds.includes(item.id))
+          )
+        );
+      }
+    }
+  };
   return (
     <div className="results-container">
       <table className="results-table">
@@ -98,14 +136,8 @@ const Result = ({ onItemClick }: ResultsProps) => {
                   type="checkbox"
                   value=""
                   id="selectAll"
-                  onChange={(event) => {
-                    const target = event.target as HTMLInputElement;
-                    if (target.checked) {
-                      dispatch(updateSelectedItems(items));
-                    } else {
-                      dispatch(updateSelectedItems([]));
-                    }
-                  }}
+                  checked={selectAllChecked}
+                  onChange={(event) => handleSelectAll(event.target.checked)}
                 />
                 <label className="form-check-label" htmlFor="selectAll"></label>
               </div>
