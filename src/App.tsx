@@ -77,6 +77,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleInitialFetch = useCallback(async () => {
+    console.log('Initial fetch');
+
     setIsLoading(true);
     try {
       const { data, totalCount } = await fetchData('');

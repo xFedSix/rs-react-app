@@ -15,26 +15,21 @@ export const fetchData = async (
 
   try {
     const apiKey = import.meta.env.VITE_API_KEY;
-    if (!apiKey) {
-      throw new Error('API key is missing');
-    }
     const response = await fetch(url, {
       headers: {
         'X-Api-Key': apiKey
       }
     });
-    console.log('response:', response);
+
     if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.statusText}`);
+      throw new Error('Network response was not ok');
     }
 
-    const result = await response.json();
-    return {
-      data: result.data || result,
-      totalCount: result.totalCount || result.count || 0
-    };
+    const data = await response.json();
+    console.log('Response:', data);
+    return data;
   } catch (error) {
-    console.error('Error occurred in fetchData:', error);
+    console.error('Fetch error:', error);
     throw error;
   }
 };

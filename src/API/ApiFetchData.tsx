@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import Loader from '../components/Loader/Loader';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { fetchData } from './fetchData';
+import { setItems, setLoading, setError } from '../Store/resultsSlice';
+import Loader from '../components/Loader/Loader';
 
 const ApiFetchData = ({
   searchQuery = '',
@@ -9,24 +11,41 @@ const ApiFetchData = ({
   orderBy = '',
   select = ''
 }) => {
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setErrorState] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
       try {
-        await fetchData(searchQuery, page, pageSize, orderBy, select);
+        setIsLoading(true);
+        const data = await fetchData(
+          searchQuery,
+          page,
+          pageSize,
+          orderBy,
+          select
+        );
+        dispatch(setItems(data.data));
+        setErrorState(null);
       } catch (error) {
-        console.error('Error occurred in fetchData:', error);
+        setErrorState('Error loading data');
+        dispatch(setError('Error loading data'));
       } finally {
-        setLoading(false);
+        setIsLoading(false);
+        dispatch(setLoading(false));
       }
     };
 
     fetchDataAsync();
-  }, [searchQuery, page, pageSize, orderBy, select]);
+  }, [searchQuery, page, pageSize, orderBy, select, dispatch]);
 
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return null;

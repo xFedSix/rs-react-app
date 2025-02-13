@@ -1,23 +1,37 @@
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Store/Store';
 import Loader from '../Loader/Loader';
 import Result, { Item } from '../Result/Result';
+import { useEffect } from 'react';
 
 export interface MainProps {
+  onItemClick: (item: Item) => void;
+  onClick: () => void;
   isLoading: boolean;
   items: Item[] | Item;
   error: string | null;
-  onItemClick: (item: Item) => void;
-  onClick: () => void;
 }
 
-const Main = ({ isLoading, items, error, onItemClick, onClick }: MainProps) => (
-  <section className="Results-content" onClick={onClick}>
-    <h2>Results</h2>
-    {isLoading ? (
-      <Loader />
-    ) : (
-      <Result items={items} error={error} onItemClick={onItemClick} />
-    )}
-  </section>
-);
+const Main = ({ onItemClick, onClick }: MainProps) => {
+  const { items, isLoading, error } = useSelector(
+    (state: RootState) => state.results
+  );
+  console.log('Main component - items:', items);
+  console.log('Main component - error:', error);
+  useEffect(() => {
+    console.log('Main component - state updated:', { items, error, isLoading });
+  }, [items, error, isLoading]);
+
+  return (
+    <section className="Results-content" onClick={onClick}>
+      <h2>Results</h2>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Result items={items} error={error} onItemClick={onItemClick} />
+      )}
+    </section>
+  );
+};
 
 export default Main;

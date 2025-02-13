@@ -31,4 +31,10 @@
 
 .results-table-body {
   cursor: pointer;
+}
+
+.form-check-input {
+  width: 2rem;
+  cursor: pointer;
+  height: 2rem;
 }/*# sourceMappingURL=Result.css.map */
