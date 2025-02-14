@@ -4,6 +4,7 @@ import './Result.scss';
 import { useEffect, useState } from 'react';
 
 export interface Item {
+  [x: string]: any;
   id: number | string;
   name: string;
   images: {

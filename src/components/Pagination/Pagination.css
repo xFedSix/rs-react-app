@@ -3,6 +3,13 @@
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
+  position: fixed;
+  background-color: #fff;
+  padding: 1rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
 .pagination button {

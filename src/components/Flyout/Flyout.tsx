@@ -18,12 +18,39 @@ const Flyout: React.FC = () => {
   };
 
   const handleDownload = () => {
-    const data = JSON.stringify(selectedItems, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
+    const headers = [
+      'ID',
+      'Name',
+      'HP',
+      'Evolves From',
+      'Rarity',
+      'Artist',
+      'Flavor Text',
+      'Image URL'
+    ].join(',');
+
+    const rows = selectedItems.map((item) =>
+      [
+        item.id,
+        item.name,
+        item.hp,
+        item.evolvesFrom || '',
+        item.rarity,
+        item.artist,
+        item.flavorText?.replace(/"/g, '""') || '',
+        item.images?.large || ''
+      ]
+        .map((value) => `"${value}"`)
+        .join(',')
+    );
+
+    const csvContent = [headers, ...rows].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'selected-pokemon.json';
+    link.setAttribute('download', `${selectedItems.length}_pokemons.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
