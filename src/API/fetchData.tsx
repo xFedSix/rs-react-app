@@ -1,33 +1,42 @@
 export const fetchData = async (
-  searchQuery = '',
+  query = '',
   page = 1,
   pageSize = 9,
   orderBy = '',
   select = ''
 ) => {
+  if (!import.meta.env.VITE_API_KEY) {
+    throw new Error('API key is missing');
+  }
+
   const baseUrl = 'https://api.pokemontcg.io/v2/cards';
-  const queryString = searchQuery ? `q=name:${searchQuery}*` : '';
-  const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${
-    queryString ? `&${queryString}` : ''
-  }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
+  const queryString = query ? `&q=${encodeURIComponent(query)}` : '';
+  const orderByString = orderBy ? `&orderBy=${orderBy}` : '';
+  const selectString = select ? `&select=${select}` : '';
+
+  const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${queryString}${orderByString}${selectString}`;
 
   try {
-    const apiKey = import.meta.env.VITE_API_KEY;
     const response = await fetch(url, {
       headers: {
-        'X-Api-Key': apiKey
+        'X-Api-Key': import.meta.env.VITE_API_KEY
       }
     });
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error(`Network response was not ok: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log(data);
 
-    return data;
+    return {
+      data: data.data,
+      totalCount: data.totalCount ?? data.count ?? 0
+    };
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred');
   }
 };

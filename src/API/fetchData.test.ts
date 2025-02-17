@@ -128,4 +128,82 @@ describe('fetchData', () => {
       totalCount: 0
     });
   });
+  it('handles pagination parameters correctly', async () => {
+    const mockData = {
+      data: [{ id: '1', name: 'Test Card' }],
+      totalCount: 100
+    };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockData)
+    });
+
+    const result = await fetchData('', 3, 20);
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.pokemontcg.io/v2/cards?page=3&pageSize=20',
+      {
+        headers: {
+          'X-Api-Key': apiKey
+        }
+      }
+    );
+    expect(result).toEqual(mockData);
+  });
+
+  it('handles multiple query parameters correctly', async () => {
+    const mockData = {
+      data: [{ id: '1', name: 'Pikachu', types: 'Lightning' }],
+      totalCount: 1
+    };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockData)
+    });
+
+    const result = await fetchData('name:Pikachu types:Lightning');
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&q=name:Pikachu* types:Lightning*',
+      {
+        headers: {
+          'X-Api-Key': apiKey
+        }
+      }
+    );
+    expect(result).toEqual(mockData);
+  });
+
+  it('handles orderBy parameter with descending order', async () => {
+    const mockData = {
+      data: [{ id: '1', name: 'Test Card' }],
+      totalCount: 1
+    };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockData)
+    });
+
+    const result = await fetchData('', 1, 9, '-name');
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&orderBy=-name',
+      {
+        headers: {
+          'X-Api-Key': apiKey
+        }
+      }
+    );
+    expect(result).toEqual(mockData);
+  });
+
+  it('handles specific error messages from the API', async () => {
+    const errorMessage = 'Invalid query parameter';
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      statusText: 'Bad Request',
+      json: () => Promise.resolve({ error: { message: errorMessage } })
+    });
+
+    await expect(fetchData('invalid:query')).rejects.toThrow(
+      `Network response was not ok: Bad Request - ${errorMessage}`
+    );
+  });
 });

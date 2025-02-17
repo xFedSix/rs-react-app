@@ -134,35 +134,23 @@ const App: React.FC = () => {
   return (
     <div className="container">
       <Header />
-      <div className="search-container">
-        <SearchInputField
-          placeholder="Search Pokémon"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          onEnterPress={handleSearch}
-          onInitialFetch={handleInitialFetch}
-        />
-        <Button text="Search" onClick={handleSearch} />
-      </div>
-      <div className="split-view">
-        <div className="main-content" onClick={handleMainClick}>
-          <Main
-            isLoading={isLoading}
-            onItemClick={handleItemClick}
-            onClick={handleMainClick}
-          />
-        </div>
-        <div className="details-panel">
-          <Outlet />
-        </div>
-      </div>
-      {!isLoading && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
+      <SearchBar
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        onSearch={handleSearch}
+        onInitialFetch={handleInitialFetch}
+      />
+      <MainContent
+        isLoading={isLoading}
+        onItemClick={handleItemClick}
+        onClick={handleMainClick}
+      />
+      <PaginationWrapper
+        isLoading={isLoading}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
       <Listeners
         searchQuery={searchQuery}
         page={currentPage}
@@ -170,7 +158,6 @@ const App: React.FC = () => {
         onError={handleError}
         triggerFetch={triggerFetch}
       />
-
       <Flyout />
     </div>
   );
