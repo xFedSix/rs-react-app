@@ -80,8 +80,11 @@ describe('Result', () => {
         <Result onItemClick={handleItemClick} />
       </Provider>
     );
+    const nameCell = screen.getByText('Pikachu').closest('td');
+    if (nameCell) {
+      fireEvent.click(nameCell);
+    }
 
-    fireEvent.click(screen.getByText('Pikachu'));
     expect(handleItemClick).toHaveBeenCalledWith(mockItems[0]);
   });
 
@@ -133,7 +136,7 @@ describe('Result', () => {
       </Provider>
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: '' });
+    const checkbox = screen.getByTestId('pokemon-checkbox-1');
     fireEvent.click(checkbox);
 
     const state = store.getState();
@@ -154,9 +157,7 @@ describe('Result', () => {
       </Provider>
     );
 
-    const selectAllCheckbox = screen.getByRole('checkbox', {
-      name: 'selectAll'
-    });
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
     fireEvent.click(selectAllCheckbox);
 
     const state = store.getState();

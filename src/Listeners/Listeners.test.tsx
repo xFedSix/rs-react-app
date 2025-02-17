@@ -1,10 +1,38 @@
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi } from 'vitest';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Listeners from './Listeners';
 import * as fetchDataModule from '../API/fetchData';
+import resultsReducer from '../Store/resultsSlice';
 
 const mockFetchData = vi.spyOn(fetchDataModule, 'fetchData');
+
+const createMockStore = (initialState = {}) => {
+  return configureStore({
+    reducer: {
+      results: resultsReducer
+    },
+    preloadedState: {
+      results: {
+        items: [],
+        error: null,
+        selectedItems: [],
+        isLoading: false,
+        ...initialState
+      }
+    }
+  });
+};
+
+const renderWithProvider = (component: React.ReactElement) => {
+  const store = createMockStore();
+  return {
+    ...render(<Provider store={store}>{component}</Provider>),
+    store
+  };
+};
 
 interface ListenersProps {
   triggerFetch: boolean;
@@ -25,14 +53,23 @@ describe('Listeners', () => {
     onError: vi.fn()
   };
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('fetches data when triggerFetch is true', async () => {
     const mockData = { data: 'test data', totalCount: 1 };
     mockFetchData.mockResolvedValueOnce(mockData);
 
-    const { rerender } = render(
+    const { rerender } = renderWithProvider(
       <Listeners {...defaultProps} triggerFetch={false} />
     );
-    rerender(<Listeners {...defaultProps} triggerFetch={true} />);
+
+    rerender(
+      <Provider store={createMockStore()}>
+        <Listeners {...defaultProps} triggerFetch={true} />
+      </Provider>
+    );
 
     await waitFor(() => {
       expect(defaultProps.onDataFetched).toHaveBeenCalledWith(mockData);
@@ -44,10 +81,15 @@ describe('Listeners', () => {
     const mockError = new Error('Fetch error');
     mockFetchData.mockRejectedValueOnce(mockError);
 
-    const { rerender } = render(
+    const { rerender } = renderWithProvider(
       <Listeners {...defaultProps} triggerFetch={false} />
     );
-    rerender(<Listeners {...defaultProps} triggerFetch={true} />);
+
+    rerender(
+      <Provider store={createMockStore()}>
+        <Listeners {...defaultProps} triggerFetch={true} />
+      </Provider>
+    );
 
     await waitFor(() => {
       expect(defaultProps.onError).toHaveBeenCalledWith('Fetch error');
@@ -58,10 +100,15 @@ describe('Listeners', () => {
     const mockUnknownError = 'Unknown error';
     mockFetchData.mockRejectedValueOnce(mockUnknownError);
 
-    const { rerender } = render(
+    const { rerender } = renderWithProvider(
       <Listeners {...defaultProps} triggerFetch={false} />
     );
-    rerender(<Listeners {...defaultProps} triggerFetch={true} />);
+
+    rerender(
+      <Provider store={createMockStore()}>
+        <Listeners {...defaultProps} triggerFetch={true} />
+      </Provider>
+    );
 
     await waitFor(() => {
       expect(defaultProps.onError).toHaveBeenCalledWith(

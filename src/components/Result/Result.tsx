@@ -53,32 +53,24 @@ const Result = ({ onItemClick }: ResultsProps) => {
   }
 
   const renderTableRows = (item: Item) => (
-    <tr
-      key={item.id}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest('.form-check')) {
-          e.stopPropagation();
-        } else {
-          onItemClick(item);
-        }
-      }}
-    >
+    <tr key={item.id}>
       <td onClick={(e) => e.stopPropagation()}>
         <div className="form-check">
           <input
             className="form-check-input"
             type="checkbox"
-            checked={selectedItems.some((selected) => selected.id === item.id)}
             id={`pokemon-${item.id}`}
+            data-testid={`pokemon-checkbox-${item.id}`}
+            aria-label={`Select ${item.name}`}
+            checked={selectedItems.some((selected) => selected.id === item.id)}
             onChange={(e) => {
-              if (e.target && e.target.checked) {
+              e.stopPropagation();
+              if (e.target.checked) {
                 dispatch(updateSelectedItems([...selectedItems, item]));
               } else {
                 dispatch(
                   updateSelectedItems(
-                    selectedItems.filter(
-                      (selectedItem) => selectedItem.id !== item.id
-                    )
+                    selectedItems.filter((selected) => selected.id !== item.id)
                   )
                 );
               }
@@ -93,7 +85,7 @@ const Result = ({ onItemClick }: ResultsProps) => {
       <td>
         <img className="card-img" src={item.images.small} alt={item.name} />
       </td>
-      <td>{item.name}</td>
+      <td onClick={() => onItemClick(item)}>{item.name}</td>
       <td>
         {item.flavorText && item.flavorText.trim() !== ''
           ? item.flavorText
@@ -135,8 +127,9 @@ const Result = ({ onItemClick }: ResultsProps) => {
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  value=""
                   id="selectAll"
+                  data-testid="select-all-checkbox"
+                  aria-label="Select all items"
                   checked={selectAllChecked}
                   onChange={(event) => handleSelectAll(event.target.checked)}
                 />
