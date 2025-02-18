@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1739822096785" clover="3.2.0">
-  <project timestamp="1739822096785" name="All files">
-    <metrics statements="936" coveredstatements="714" conditionals="150" coveredconditionals="139" methods="55" coveredmethods="50" elements="1141" coveredelements="903" complexity="0" loc="936" ncloc="936" packages="15" files="25" classes="25"/>
+<coverage generated="1739905546880" clover="3.2.0">
+  <project timestamp="1739905546880" name="All files">
+    <metrics statements="936" coveredstatements="735" conditionals="150" coveredconditionals="139" methods="55" coveredmethods="50" elements="1141" coveredelements="924" complexity="0" loc="936" ncloc="936" packages="15" files="25" classes="25"/>
     <package name="src">
       <metrics statements="169" coveredstatements="19" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <file name="App.tsx" path="F:\RSSCHOOL\REACT2025Q1\rs-react-app\src\App.tsx">
@@ -974,30 +974,30 @@
       </file>
     </package>
     <package name="src.components.Search">
-      <metrics statements="73" coveredstatements="52" conditionals="9" coveredconditionals="9" methods="6" coveredmethods="6"/>
+      <metrics statements="73" coveredstatements="73" conditionals="9" coveredconditionals="9" methods="6" coveredmethods="6"/>
       <file name="SearchBar.tsx" path="F:\RSSCHOOL\REACT2025Q1\rs-react-app\src\components\Search\SearchBar.tsx">
-        <metrics statements="21" coveredstatements="0" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="27" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
+        <metrics statements="21" coveredstatements="21" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="12" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="13" count="8" type="stmt"/>
+        <line num="14" count="8" type="stmt"/>
+        <line num="15" count="8" type="stmt"/>
+        <line num="16" count="8" type="stmt"/>
+        <line num="17" count="8" type="stmt"/>
+        <line num="18" count="8" type="stmt"/>
+        <line num="19" count="8" type="stmt"/>
+        <line num="20" count="8" type="stmt"/>
+        <line num="21" count="8" type="stmt"/>
+        <line num="22" count="8" type="stmt"/>
+        <line num="23" count="8" type="stmt"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="25" count="8" type="stmt"/>
+        <line num="26" count="8" type="stmt"/>
+        <line num="27" count="8" type="stmt"/>
+        <line num="28" count="8" type="stmt"/>
+        <line num="30" count="8" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
       </file>
       <file name="SearchInputField.tsx" path="F:\RSSCHOOL\REACT2025Q1\rs-react-app\src\components\Search\SearchInputField.tsx">
         <metrics statements="35" coveredstatements="35" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="3"/>

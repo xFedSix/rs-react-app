@@ -6,7 +6,7 @@ describe('fetchData', () => {
 
   beforeEach(() => {
     vi.stubEnv('VITE_API_KEY', mockApiKey);
-    global.fetch = vi.fn();
+    globalThis.fetch = vi.fn();
   });
 
   afterEach(() => {
@@ -25,14 +25,14 @@ describe('fetchData', () => {
       data: [{ id: 1, name: 'Pikachu' }],
       count: 1
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
 
     const result = await fetchData();
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
       {
         headers: {
@@ -51,7 +51,7 @@ describe('fetchData', () => {
       data: [{ id: 1, name: 'Pikachu' }],
       count: 1
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
@@ -59,7 +59,7 @@ describe('fetchData', () => {
     const query = 'name:Pikachu set.name:"Base Set"';
     await fetchData(query);
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&q=name%3APikachu%20set.name%3A%22Base%20Set%22',
       expect.any(Object)
     );
@@ -70,7 +70,7 @@ describe('fetchData', () => {
       data: [{ id: 1, name: 'Pikachu' }],
       count: 1
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
@@ -78,7 +78,7 @@ describe('fetchData', () => {
     const orderBy = 'name';
     await fetchData('', 1, 9, orderBy);
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&orderBy=name',
       {
         headers: {
@@ -93,7 +93,7 @@ describe('fetchData', () => {
       data: [{ id: 1, name: 'Pikachu' }],
       count: 1
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
@@ -101,7 +101,7 @@ describe('fetchData', () => {
     const select = 'id,name,images.small';
     await fetchData('', 1, 9, '', select);
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&select=id,name,images.small',
       {
         headers: {
@@ -113,7 +113,7 @@ describe('fetchData', () => {
 
   it('should throw an error for non-OK network responses', async () => {
     const errorMessage = 'Bad Request';
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       statusText: errorMessage
     });
@@ -122,7 +122,7 @@ describe('fetchData', () => {
       `Network response was not ok: ${errorMessage}`
     );
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
       {
         headers: {
@@ -140,7 +140,7 @@ describe('fetchData', () => {
       ],
       totalCount: 2
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
@@ -151,7 +151,7 @@ describe('fetchData', () => {
       data: mockResponse.data,
       totalCount: mockResponse.totalCount
     });
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
       {
         headers: {
@@ -166,14 +166,14 @@ describe('fetchData', () => {
       data: [],
       count: 0
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
 
     const result = await fetchData();
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
       {
         headers: {
@@ -189,11 +189,11 @@ describe('fetchData', () => {
 
   it('should throw an error for network failures', async () => {
     const networkError = new Error('Network failure');
-    global.fetch = vi.fn().mockRejectedValue(networkError);
+    globalThis.fetch = vi.fn().mockRejectedValue(networkError);
 
     await expect(fetchData()).rejects.toThrow('Network failure');
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
       {
         headers: {
@@ -208,7 +208,7 @@ describe('fetchData', () => {
       data: [{ id: 1, name: 'Pikachu' }],
       count: 1
     };
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue(mockResponse)
     });
@@ -217,7 +217,7 @@ describe('fetchData', () => {
     const pageSize = 20;
     await fetchData('', page, pageSize);
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.pokemontcg.io/v2/cards?page=2&pageSize=20',
       {
         headers: {
