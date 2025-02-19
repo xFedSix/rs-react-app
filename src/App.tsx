@@ -19,6 +19,8 @@ import { setLoading, setItems, setError } from './Store/resultsSlice';
 import SearchBar from './components/Search/SearchBar';
 import MainContent from './components/Main/MainContent';
 import PaginationWrapper from './components/Pagination/PaginationWrapper';
+import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +32,7 @@ const App: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
   const dispatch = useDispatch();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,6 +46,9 @@ const App: React.FC = () => {
     const page = parseInt(searchParams.get('page') || '1', 10);
     setCurrentPage(page);
   }, [location.search]);
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,46 +137,51 @@ const App: React.FC = () => {
 
   return (
     <div className="container">
-      <Header />
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onSearch={handleSearch}
-        onInitialFetch={handleInitialFetch}
-      />
-      <MainContent
-        isLoading={isLoading}
-        onItemClick={handleItemClick}
-        onClick={handleMainClick}
-      />
-      <PaginationWrapper
-        isLoading={isLoading}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-      <Listeners
-        searchQuery={searchQuery}
-        page={currentPage}
-        onDataFetched={handleDataFetched}
-        onError={handleError}
-        triggerFetch={triggerFetch}
-      />
-      <Flyout />
+      <div className={`app ${theme}`}>
+        <ThemeSwitcher />
+        <Header />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearch={handleSearch}
+          onInitialFetch={handleInitialFetch}
+        />
+        <MainContent
+          isLoading={isLoading}
+          onItemClick={handleItemClick}
+          onClick={handleMainClick}
+        />
+        <PaginationWrapper
+          isLoading={isLoading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+        <Listeners
+          searchQuery={searchQuery}
+          page={currentPage}
+          onDataFetched={handleDataFetched}
+          onError={handleError}
+          triggerFetch={triggerFetch}
+        />
+        <Flyout />
+      </div>
     </div>
   );
 };
 
 const AppWrapper: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<ItemDetailsWrapper />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<ItemDetailsWrapper />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 };
 

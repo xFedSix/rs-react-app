@@ -1,6 +1,5 @@
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { fetchData } from './fetchData';
-import { waitFor } from '@testing-library/react';
 
 describe('fetchData', () => {
   const mockApiKey = 'test-api-key';

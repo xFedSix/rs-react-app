@@ -10,6 +10,9 @@
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 .flyout .flyout-buttons {
   display: flex;
@@ -20,6 +23,9 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 .flyout .flyout-buttons button:hover {
   background-color: #f0f0f0;
