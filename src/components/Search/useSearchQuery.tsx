@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const useSearchQuery = (initialQuery: string) => {
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
-
-  useEffect(() => {
-    const savedQuery = localStorage.getItem('searchQuery');
-    if (savedQuery) {
-      setSearchQuery(savedQuery);
-    }
-  }, []);
+  const [searchQueryLocal, setSearchQuery] = useState(() => {
+    const saved = localStorage.getItem('searchQuery');
+    return saved !== null ? saved : initialQuery;
+  });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -16,7 +12,7 @@ const useSearchQuery = (initialQuery: string) => {
     setSearchQuery(query);
   };
 
-  return [searchQuery, handleChange] as const;
+  return [searchQueryLocal, handleChange] as const;
 };
 
 export default useSearchQuery;

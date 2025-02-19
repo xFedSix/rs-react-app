@@ -22,6 +22,7 @@ import PaginationWrapper from './components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
 import { ThemeProvider } from './context/ThemeContext';
 import { useTheme } from './context/useTheme';
+import useSearchQuery from './components/Search/useSearchQuery';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +35,7 @@ const App: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { theme } = useTheme();
+  const [searchQueryLocal] = useSearchQuery('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,7 +91,7 @@ const App: React.FC = () => {
   const handleInitialFetch = useCallback(async () => {
     dispatch(setLoading(true));
     try {
-      const { data, totalCount } = await fetchData('');
+      const { data, totalCount } = await fetchData(searchQueryLocal);
       dispatch(setItems(data));
       dispatch(setLoading(false));
       dispatch(setError(null));
@@ -102,7 +104,10 @@ const App: React.FC = () => {
         handleError(String(error));
       }
     }
-  }, [dispatch, handleDataFetched, handleError]);
+  }, [dispatch, handleDataFetched, handleError, searchQueryLocal]);
+  useEffect(() => {
+    handleInitialFetch();
+  }, [handleInitialFetch]);
 
   const handleItemClick = useCallback(
     (item: Item) => {
