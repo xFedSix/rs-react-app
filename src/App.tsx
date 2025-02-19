@@ -20,7 +20,8 @@ import SearchBar from './components/Search/SearchBar';
 import MainContent from './components/Main/MainContent';
 import PaginationWrapper from './components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { useTheme } from './context/useTheme';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
