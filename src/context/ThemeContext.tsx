@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { THEME_KEY, getInitialTheme } from './themeUtils';
+import { THEME_KEY, getInitialTheme } from './ThemeTypes';
 import { ThemeContext, Theme } from './theme-context';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [colorTheme, setColorTheme] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
-    localStorage.setItem(THEME_KEY, theme);
-  }, [theme]);
+    localStorage.setItem(THEME_KEY, colorTheme);
+  }, [colorTheme]);
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setColorTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: colorTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
