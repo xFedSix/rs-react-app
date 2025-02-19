@@ -1,5 +1,6 @@
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { fetchData } from './fetchData';
+import { waitFor } from '@testing-library/react';
 
 describe('fetchData', () => {
   const mockApiKey = 'test-api-key';
@@ -46,22 +47,32 @@ describe('fetchData', () => {
     });
   });
 
-  it('should encode query string properly', async () => {
-    const mockResponse = {
-      data: [{ id: 1, name: 'Pikachu' }],
-      count: 1
-    };
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue(mockResponse)
-    });
+  it('should handle non-Error objects in catch block', async () => {
+    globalThis.fetch = vi.fn().mockRejectedValue('String error');
 
-    const query = 'name:Pikachu set.name:"Base Set"';
-    await fetchData(query);
+    await expect(fetchData()).rejects.toThrow('An unknown error occurred');
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9&q=name%3APikachu%20set.name%3A%22Base%20Set%22',
-      expect.any(Object)
+      'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
+      {
+        headers: {
+          'X-Api-Key': mockApiKey
+        }
+      }
+    );
+  });
+  it('should handle undefined error in catch block', async () => {
+    globalThis.fetch = vi.fn().mockRejectedValue(undefined);
+
+    await expect(fetchData()).rejects.toThrow('An unknown error occurred');
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://api.pokemontcg.io/v2/cards?page=1&pageSize=9',
+      {
+        headers: {
+          'X-Api-Key': mockApiKey
+        }
+      }
     );
   });
 

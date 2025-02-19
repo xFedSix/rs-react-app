@@ -4,23 +4,21 @@ import {
   Route,
   Routes,
   useNavigate,
-  useLocation,
-  Outlet
+  useLocation
 } from 'react-router-dom';
-import Button from './components/Button/Button';
-import SearchInputField from './components/Search/SearchInputField';
 import './App.css';
 import Listeners from './Listeners/Listeners';
 import { Item } from './components/Result/Result';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
-import Main from './components/Main/Main';
-import Pagination from './components/Pagination/Pagination';
 import Flyout from './components/Flyout/Flyout';
 import NotFound from './components/NotFound/NotFound';
 import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
 import { useDispatch } from 'react-redux';
 import { setLoading, setItems, setError } from './Store/resultsSlice';
+import SearchBar from './components/Search/SearchBar';
+import MainContent from './components/Main/MainContent';
+import PaginationWrapper from './components/Pagination/PaginationWrapper';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);

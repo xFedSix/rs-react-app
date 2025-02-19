@@ -83,7 +83,12 @@ const Result = ({ onItemClick }: ResultsProps) => {
         </div>
       </td>
       <td>
-        <img className="card-img" src={item.images.small} alt={item.name} />
+        <img
+          className="card-img"
+          src={item.images.small}
+          alt={item.name}
+          onClick={() => onItemClick(item)}
+        />
       </td>
       <td onClick={() => onItemClick(item)}>{item.name}</td>
       <td>

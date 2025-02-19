@@ -1,5 +1,5 @@
 export const fetchData = async (
-  query = '',
+  searchQuery = '',
   page = 1,
   pageSize = 9,
   orderBy = '',
@@ -10,11 +10,10 @@ export const fetchData = async (
   }
 
   const baseUrl = 'https://api.pokemontcg.io/v2/cards';
-  const queryString = query ? `&q=${encodeURIComponent(query)}` : '';
-  const orderByString = orderBy ? `&orderBy=${orderBy}` : '';
-  const selectString = select ? `&select=${select}` : '';
-
-  const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${queryString}${orderByString}${selectString}`;
+  const queryString = searchQuery ? `q=name:${searchQuery}*` : '';
+  const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${
+    queryString ? `&${queryString}` : ''
+  }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
 
   try {
     const response = await fetch(url, {
