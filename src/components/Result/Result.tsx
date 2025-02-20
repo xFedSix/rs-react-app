@@ -100,26 +100,23 @@ const Result = ({ onItemClick }: ResultsProps) => {
   );
   const handleSelectAll = (checked: boolean) => {
     setSelectAllChecked(checked);
-    if (checked && Array.isArray(items)) {
-      const currentPageItems = items as Item[];
-      const newSelection = [...selectedItems];
+    const currentItems = Array.isArray(items) ? items : [items];
 
-      currentPageItems.forEach((item) => {
+    if (checked) {
+      const newSelection = [...selectedItems];
+      currentItems.forEach((item) => {
         if (!selectedItems.some((selected) => selected.id === item.id)) {
           newSelection.push(item);
         }
       });
-
       dispatch(updateSelectedItems(newSelection));
     } else {
-      if (Array.isArray(items)) {
-        const currentPageIds = (items as Item[]).map((item) => item.id);
-        dispatch(
-          updateSelectedItems(
-            selectedItems.filter((item) => !currentPageIds.includes(item.id))
-          )
-        );
-      }
+      const currentIds = currentItems.map((item) => item.id);
+      dispatch(
+        updateSelectedItems(
+          selectedItems.filter((item) => !currentIds.includes(item.id))
+        )
+      );
     }
   };
   return (

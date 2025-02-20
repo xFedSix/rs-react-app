@@ -220,4 +220,114 @@ describe('Result', () => {
     expect(screen.getByText('Pikachu')).toBeInTheDocument();
     expect(screen.getByText('Electric type Pokémon')).toBeInTheDocument();
   });
+  it('should update selectAllChecked when all items are selected', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: mockItems,
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
+    expect(selectAllCheckbox).toBeChecked();
+  });
+
+  it('should handle select all with partial selection', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [mockItems[0]],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
+    expect(selectAllCheckbox).not.toBeChecked();
+  });
+
+  it('should add only missing items when selecting all', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [mockItems[0]],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual(mockItems);
+  });
+
+  it('should remove only current page items when unselecting all', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [
+        ...mockItems,
+        {
+          id: 3,
+          name: 'Bulbasaur',
+          images: { small: '', large: '' },
+          flavorText: ''
+        }
+      ],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual([
+      {
+        id: 3,
+        name: 'Bulbasaur',
+        images: { small: '', large: '' },
+        flavorText: ''
+      }
+    ]);
+  });
+
+  it('should handle select all with single item', () => {
+    const store = createMockStore({
+      items: mockItem,
+      selectedItems: [],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual([mockItem]);
+  });
 });
