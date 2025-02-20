@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import PaginationWrapper from './PaginationWrapper';
 
-// Mock the Pagination component
 vi.mock('../Pagination/Pagination', () => ({
   __esModule: true,
   default: ({ currentPage, totalPages, onPageChange }: any) => (
