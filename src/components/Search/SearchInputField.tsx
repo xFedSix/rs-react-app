@@ -6,7 +6,7 @@ interface SearchInputFieldProps {
   placeholder: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEnterPress: () => void;
+  onEnterPress: (query: string) => void;
   onInitialFetch: () => void;
 }
 
@@ -27,7 +27,7 @@ const SearchInputField: React.FC<SearchInputFieldProps> = ({
     event: React.KeyboardEvent<HTMLInputElement>
   ): void => {
     if (event.key === 'Enter') {
-      onEnterPress();
+      onEnterPress(searchQuery);
     }
   };
 

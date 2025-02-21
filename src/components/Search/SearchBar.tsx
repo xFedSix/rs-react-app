@@ -5,7 +5,7 @@ import Button from '../Button/Button';
 interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearch: () => void;
+  onSearch: (query: string) => void;
   onInitialFetch: () => void;
 }
 
@@ -24,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onEnterPress={onSearch}
         onInitialFetch={onInitialFetch}
       />
-      <Button text="Search" onClick={onSearch} />
+      <Button text="Search" onClick={() => onSearch(searchQuery)} />
     </div>
   );
 };

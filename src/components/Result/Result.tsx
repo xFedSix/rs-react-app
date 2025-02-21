@@ -15,6 +15,8 @@ export interface Item {
 }
 
 export interface ResultsProps {
+  items?: Item[] | Item;
+  error?: string | null;
   onItemClick: (item: Item) => void;
 }
 
