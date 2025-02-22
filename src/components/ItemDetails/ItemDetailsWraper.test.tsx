@@ -126,16 +126,14 @@ describe('ItemDetailsWrapper', () => {
   });
 
   it('returns null when no details parameter is present', async () => {
-    let container;
     await act(async () => {
-      const result = render(
+      render(
         <MemoryRouter>
           <Routes>
             <Route path="/" element={<ItemDetailsWrapper />} />
           </Routes>
         </MemoryRouter>
       );
-      container = result.container;
     });
   });
   it('handles absence of itemId', async () => {
