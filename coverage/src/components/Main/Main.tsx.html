@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/components/Search/SearchBar.tsx</title>
+    <title>Code coverage report for src/components/Main/Main.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/components/Search</a> SearchBar.tsx</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/components/Main</a> Main.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
@@ -94,8 +94,9 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -105,60 +106,56 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
-import SearchInputField from '../Search/SearchInputField';
-import Button from '../Button/Button';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useSelector } from 'react-redux';
+import { RootState } from '../../Store/Store';
+import Loader from '../Loader/Loader';
+import Result, { Item } from '../Result/Result';
+import { useEffect } from 'react';
 &nbsp;
-interface SearchBarProps {
-  searchQuery: string;
-  onSearchChange: (event: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void;
-  onSearch: (query: string) =&gt; void;
-  onInitialFetch: () =&gt; void;
+export interface MainProps {
+  onItemClick: (item: Item) =&gt; void;
+  onClick: () =&gt; void;
+  isLoading: boolean;
 }
 &nbsp;
-const SearchBar: React.FC&lt;SearchBarProps&gt; = ({
-  searchQuery,
-  onSearchChange,
-  onSearch,
-  onInitialFetch
-}) =&gt; {
+const Main = ({ onItemClick, onClick }: MainProps) =&gt; {
+  const { items, isLoading, error } = useSelector(
+    (state: RootState) =&gt; state.results
+  );
+  useEffect(() =&gt; {}, [items, error, isLoading]);
+&nbsp;
   return (
-    &lt;div className="search-container"&gt;
-      &lt;SearchInputField
-        placeholder="Search Pokémon"
-        value={searchQuery}
-        onChange={onSearchChange}
-        onEnterPress={onSearch}
-        onInitialFetch={onInitialFetch}
-      /&gt;
-      &lt;Button text="Search" onClick={() =&gt; onSearch(searchQuery)} /&gt;
-    &lt;/div&gt;
+    &lt;section className="Results-content" onClick={onClick}&gt;
+      &lt;h2&gt;Results&lt;/h2&gt;
+      {isLoading ? (
+        &lt;Loader /&gt;
+      ) : (
+        &lt;Result items={items} error={error} onItemClick={onItemClick} /&gt;
+      )}
+    &lt;/section&gt;
   );
 };
 &nbsp;
-export default SearchBar;
+export default Main;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

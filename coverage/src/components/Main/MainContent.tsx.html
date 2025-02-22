@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/components/Search/SearchBar.tsx</title>
+    <title>Code coverage report for src/components/Main/MainContent.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/components/Search</a> SearchBar.tsx</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/components/Main</a> MainContent.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>23/23</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>23/23</span>
             </div>
         
             
@@ -95,10 +95,13 @@
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -107,58 +110,61 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
-import SearchInputField from '../Search/SearchInputField';
-import Button from '../Button/Button';
+import { Outlet } from 'react-router-dom';
+import Main from '../Main/Main';
+import { Item } from '../Result/Result';
+import './MainContent.scss';
 &nbsp;
-interface SearchBarProps {
-  searchQuery: string;
-  onSearchChange: (event: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void;
-  onSearch: (query: string) =&gt; void;
-  onInitialFetch: () =&gt; void;
+interface MainContentProps {
+  isLoading: boolean;
+  onItemClick: (item: Item) =&gt; void;
+  onClick: () =&gt; void;
 }
 &nbsp;
-const SearchBar: React.FC&lt;SearchBarProps&gt; = ({
-  searchQuery,
-  onSearchChange,
-  onSearch,
-  onInitialFetch
+const MainContent: React.FC&lt;MainContentProps&gt; = ({
+  isLoading,
+  onItemClick,
+  onClick
 }) =&gt; {
   return (
-    &lt;div className="search-container"&gt;
-      &lt;SearchInputField
-        placeholder="Search Pokémon"
-        value={searchQuery}
-        onChange={onSearchChange}
-        onEnterPress={onSearch}
-        onInitialFetch={onInitialFetch}
-      /&gt;
-      &lt;Button text="Search" onClick={() =&gt; onSearch(searchQuery)} /&gt;
+    &lt;div className="split-view"&gt;
+      &lt;div className="main-content" onClick={onClick}&gt;
+        &lt;Main
+          isLoading={isLoading}
+          onItemClick={onItemClick}
+          onClick={onClick}
+        /&gt;
+      &lt;/div&gt;
+      &lt;div className="details-panel"&gt;
+        &lt;Outlet /&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
   );
 };
 &nbsp;
-export default SearchBar;
+export default MainContent;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

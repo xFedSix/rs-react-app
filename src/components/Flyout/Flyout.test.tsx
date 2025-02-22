@@ -4,7 +4,17 @@ import { configureStore } from '@reduxjs/toolkit';
 import Flyout from './Flyout';
 import resultsReducer from '../../Store/resultsSlice';
 
-const createMockStore = (selectedItems = []) => {
+interface Item {
+  id: number;
+  name: string;
+  images: {
+    small: string;
+    large: string;
+  };
+  flavorText: string;
+}
+
+const createMockStore = (selectedItems: Item[] = []) => {
   return configureStore({
     reducer: {
       results: resultsReducer
@@ -33,7 +43,12 @@ describe('Flyout', () => {
 
   it('renders flyout when items are selected', () => {
     const selectedItems = [
-      { id: 1, name: 'Pikachu', images: { small: '', large: '' } }
+      {
+        id: 1,
+        name: 'Pikachu',
+        images: { small: '', large: '' },
+        flavorText: ''
+      }
     ];
     const store = createMockStore(selectedItems);
 
@@ -50,7 +65,12 @@ describe('Flyout', () => {
 
   it('unselects all items when clicking Unselect all', () => {
     const selectedItems = [
-      { id: 1, name: 'Pikachu', images: { small: '', large: '' } }
+      {
+        id: 1,
+        name: 'Pikachu',
+        images: { small: '', large: '' },
+        flavorText: ''
+      }
     ];
     const store = createMockStore(selectedItems);
 
@@ -71,7 +91,12 @@ describe('Flyout', () => {
     URL.revokeObjectURL = revokeObjectURL;
 
     const selectedItems = [
-      { id: 1, name: 'Pikachu', images: { small: '', large: '' } }
+      {
+        id: 1,
+        name: 'Pikachu',
+        images: { small: '', large: '' },
+        flavorText: ''
+      }
     ];
     const store = createMockStore(selectedItems);
 

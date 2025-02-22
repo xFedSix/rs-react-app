@@ -79,7 +79,8 @@ describe('Main', () => {
 
   const defaultProps: MainProps = {
     onItemClick: vi.fn(),
-    onClick: vi.fn()
+    onClick: vi.fn(),
+    isLoading: false
   };
 
   const renderWithProvider = (props: MainProps, storeState = {}) => {
