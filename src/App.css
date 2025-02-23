@@ -1,20 +1,37 @@
 #root {
-  max-width: 1280px;
+  max-width: 90%;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
+
 .container {
-  width: 80rem;
-}
-.main-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.details-section {
-  width: 50%;
-  padding: 1rem;
-  border-left: 1px solid #ccc;
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.split-view {
+  display: flex;
+  height: calc(100vh - 120px);
+}
+
+.main-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.details-panel {
+  padding: 20px;
+}
+.details-img {
+  width: 100%;
+  min-width: 400px;
+  margin: 0 auto;
 }

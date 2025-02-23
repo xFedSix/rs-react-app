@@ -1,6 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Result, { Item } from './Result';
+import resultsReducer from '../../Store/resultsSlice';
 
 const mockItem: Item = {
   id: 1,
@@ -33,110 +36,298 @@ const mockItems: Item[] = [
   }
 ];
 
-const mockItemsWithEmptyFlavorText: Item[] = [
-  {
-    id: 1,
-    name: 'Bulbasaur',
-    images: {
-      small: 'bulbasaur-small.png',
-      large: 'bulbasaur-large.png'
+const createMockStore = (initialState: any) => {
+  return configureStore({
+    reducer: {
+      results: resultsReducer
     },
-    flavorText: ''
-  },
-  {
-    id: 2,
-    name: 'Squirtle',
-    images: {
-      small: 'squirtle-small.png',
-      large: 'squirtle-large.png'
-    },
-    flavorText: ''
-  }
-];
-
-const mockItemsWithUndefinedFlavorText: Item[] = [
-  {
-    id: 1,
-    name: 'Bulbasaur',
-    images: {
-      small: 'bulbasaur-small.png',
-      large: 'bulbasaur-large.png'
-    },
-    flavorText: undefined
-  },
-  {
-    id: 2,
-    name: 'Squirtle',
-    images: {
-      small: 'squirtle-small.png',
-      large: 'squirtle-large.png'
-    },
-    flavorText: undefined
-  }
-];
+    preloadedState: {
+      results: initialState
+    }
+  });
+};
 
 describe('Result', () => {
-  it('renders items', () => {
-    render(<Result items={mockItems} error={null} onItemClick={() => {}} />);
+  it('renders items from store', () => {
+    const store = createMockStore({
+      items: mockItems,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
     expect(screen.getByText('Pikachu')).toBeInTheDocument();
     expect(screen.getByText('Charmander')).toBeInTheDocument();
   });
 
   it('handles item click', () => {
-    const handleItemClick = vitest.fn();
+    const handleItemClick = vi.fn();
+    const store = createMockStore({
+      items: mockItems,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
     render(
-      <Result items={mockItems} error={null} onItemClick={handleItemClick} />
+      <Provider store={store}>
+        <Result onItemClick={handleItemClick} />
+      </Provider>
     );
-    fireEvent.click(screen.getByText('Pikachu'));
-    expect(handleItemClick).toHaveBeenCalledTimes(1);
+    const nameCell = screen.getByText('Pikachu').closest('td');
+    if (nameCell) {
+      fireEvent.click(nameCell);
+    }
+
+    expect(handleItemClick).toHaveBeenCalledWith(mockItems[0]);
   });
 
-  it('displays error message', () => {
+  it('displays error message from store', () => {
+    const store = createMockStore({
+      items: [],
+      error: 'Error fetching data',
+      selectedItems: [],
+      isLoading: false
+    });
+
     render(
-      <Result items={[]} error="Error fetching data" onItemClick={() => {}} />
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
     );
+
     expect(screen.getByText('Error fetching data')).toBeInTheDocument();
   });
 
-  it('displays "No results found" when items is null', () => {
-    render(<Result items={[]} error={null} onItemClick={() => {}} />);
+  it('displays "No results found" when items is empty array in store', () => {
+    const store = createMockStore({
+      items: [],
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
     expect(screen.getByText('No results found.')).toBeInTheDocument();
   });
 
-  it('displays "No results found" when items is an empty array', () => {
-    render(<Result items={[]} error={null} onItemClick={() => {}} />);
-    expect(screen.getByText('No results found.')).toBeInTheDocument();
+  it('handles checkbox selection', () => {
+    const store = createMockStore({
+      items: mockItems,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const checkbox = screen.getByTestId('pokemon-checkbox-1');
+    fireEvent.click(checkbox);
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual([mockItems[0]]);
+  });
+
+  it('handles "Select All" checkbox', () => {
+    const store = createMockStore({
+      items: mockItems,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
+    fireEvent.click(selectAllCheckbox);
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual(mockItems);
   });
 
   it('renders items with empty flavor text', () => {
-    render(
-      <Result
-        items={mockItemsWithEmptyFlavorText}
-        error={null}
-        onItemClick={() => {}}
-      />
-    );
-    expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
-    expect(screen.getByText('Squirtle')).toBeInTheDocument();
-    expect(screen.getAllByText('No information')).toHaveLength(2);
-  });
+    const mockItemsWithEmptyFlavorText = [
+      {
+        id: 1,
+        name: 'Bulbasaur',
+        images: {
+          small: 'bulbasaur-small.png',
+          large: 'bulbasaur-large.png'
+        },
+        flavorText: ''
+      },
+      {
+        id: 2,
+        name: 'Squirtle',
+        images: {
+          small: 'squirtle-small.png',
+          large: 'squirtle-large.png'
+        },
+        flavorText: ''
+      }
+    ];
+    const store = createMockStore({
+      items: mockItemsWithEmptyFlavorText,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
 
-  it('renders items with undefined flavor text', () => {
     render(
-      <Result
-        items={mockItemsWithUndefinedFlavorText}
-        error={null}
-        onItemClick={() => {}}
-      />
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
     );
+
     expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
     expect(screen.getByText('Squirtle')).toBeInTheDocument();
     expect(screen.getAllByText('No information')).toHaveLength(2);
   });
 
   it('renders a single item', () => {
-    render(<Result items={mockItem} error={null} onItemClick={() => {}} />);
+    const store = createMockStore({
+      items: mockItem,
+      error: null,
+      selectedItems: [],
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
     expect(screen.getByText('Pikachu')).toBeInTheDocument();
     expect(screen.getByText('Electric type Pokémon')).toBeInTheDocument();
+  });
+  it('should update selectAllChecked when all items are selected', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: mockItems,
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
+    expect(selectAllCheckbox).toBeChecked();
+  });
+
+  it('should handle select all with partial selection', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [mockItems[0]],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    const selectAllCheckbox = screen.getByTestId('select-all-checkbox');
+    expect(selectAllCheckbox).not.toBeChecked();
+  });
+
+  it('should add only missing items when selecting all', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [mockItems[0]],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual(mockItems);
+  });
+
+  it('should remove only current page items when unselecting all', () => {
+    const store = createMockStore({
+      items: mockItems,
+      selectedItems: [
+        ...mockItems,
+        {
+          id: 3,
+          name: 'Bulbasaur',
+          images: { small: '', large: '' },
+          flavorText: ''
+        }
+      ],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual([
+      {
+        id: 3,
+        name: 'Bulbasaur',
+        images: { small: '', large: '' },
+        flavorText: ''
+      }
+    ]);
+  });
+
+  it('should handle select all with single item', () => {
+    const store = createMockStore({
+      items: mockItem,
+      selectedItems: [],
+      error: null,
+      isLoading: false
+    });
+
+    render(
+      <Provider store={store}>
+        <Result onItemClick={() => {}} />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByTestId('select-all-checkbox'));
+
+    const state = store.getState();
+    expect(state.results.selectedItems).toEqual([mockItem]);
   });
 });

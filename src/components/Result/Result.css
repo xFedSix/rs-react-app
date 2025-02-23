@@ -26,9 +26,15 @@
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-  object-fit: cover;
+     object-fit: cover;
 }
 
 .results-table-body {
   cursor: pointer;
-} /*# sourceMappingURL=Result.css.map */
+}
+
+.form-check-input {
+  width: 2rem;
+  cursor: pointer;
+  height: 2rem;
+}/*# sourceMappingURL=Result.css.map */

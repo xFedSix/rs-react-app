@@ -4,39 +4,43 @@ import {
   Route,
   Routes,
   useNavigate,
-  useLocation,
-  Outlet
+  useLocation
 } from 'react-router-dom';
-import Button from './components/Button/Button';
-import SearchInputField from './components/Search/SearchInputField';
 import './App.css';
 import Listeners from './Listeners/Listeners';
 import { Item } from './components/Result/Result';
 import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
-import Main from './components/Main/Main';
-import ItemDetails from './components/ItemDetails/ItemDetails';
-import Pagination from './components/Pagination/Pagination';
+import Flyout from './components/Flyout/Flyout';
 import NotFound from './components/NotFound/NotFound';
+import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
+import { useDispatch } from 'react-redux';
+import { setLoading, setItems, setError } from './Store/resultsSlice';
+import SearchBar from './components/Search/SearchBar';
+import MainContent from './components/Main/MainContent';
+import PaginationWrapper from './components/Pagination/PaginationWrapper';
+import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
+import { ThemeProvider } from './context/ThemeContext';
+import { useTheme } from './context/useTheme';
+import useSearchQuery from './components/Search/useSearchQuery';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [triggerFetch, setTriggerFetch] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { theme } = useTheme();
+  const [searchQueryLocal] = useSearchQuery('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -45,6 +49,9 @@ const App: React.FC = () => {
     const page = parseInt(searchParams.get('page') || '1', 10);
     setCurrentPage(page);
   }, [location.search]);
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,31 +64,38 @@ const App: React.FC = () => {
     const trimmedQuery = searchQuery.trim();
     setSearchQuery(trimmedQuery);
     setCurrentPage(1);
-    setIsLoading(true);
+    dispatch(setLoading(true));
     setTriggerFetch(true);
-  }, [searchQuery]);
+  }, [dispatch, searchQuery]);
 
   const handleDataFetched = useCallback(
     ({ data, totalCount }: { data: Item[]; totalCount: number }) => {
-      setItems(data);
-      setIsLoading(false);
+      dispatch(setItems(data));
+      dispatch(setLoading(false));
+      dispatch(setError(null));
       setTriggerFetch(false);
-      setError(null);
       setTotalPages(Math.ceil(totalCount / 9));
     },
-    []
+    [dispatch]
   );
 
-  const handleError = useCallback((error: string) => {
-    setError(error);
-    setIsLoading(false);
-    setTriggerFetch(false);
-  }, []);
+  const handleError = useCallback(
+    (error: string) => {
+      setError(error);
+      dispatch(setLoading(false));
+      setTriggerFetch(false);
+    },
+    [dispatch]
+  );
 
   const handleInitialFetch = useCallback(async () => {
-    setIsLoading(true);
+    dispatch(setLoading(true));
     try {
-      const { data, totalCount } = await fetchData('');
+      const { data, totalCount } = await fetchData(searchQueryLocal);
+      dispatch(setItems(data));
+      dispatch(setLoading(false));
+      dispatch(setError(null));
+      setTotalPages(Math.ceil(totalCount / 9));
       handleDataFetched({ data, totalCount });
     } catch (error) {
       if (error instanceof Error) {
@@ -90,20 +104,25 @@ const App: React.FC = () => {
         handleError(String(error));
       }
     }
-  }, [handleDataFetched, handleError]);
+  }, [dispatch, handleDataFetched, handleError, searchQueryLocal]);
+  useEffect(() => {
+    handleInitialFetch();
+  }, [handleInitialFetch]);
 
   const handleItemClick = useCallback(
     (item: Item) => {
-      setSelectedItem(item);
-      navigate(`/details/${item.id}`);
+      const newSearchParams = new URLSearchParams(location.search);
+      newSearchParams.set('details', item.id.toString());
+      navigate({ search: newSearchParams.toString() });
     },
-    [navigate]
+    [navigate, location.search]
   );
 
   const handleCloseDetails = useCallback(() => {
-    setSelectedItem(null);
-    navigate('/');
-  }, [navigate]);
+    const newSearchParams = new URLSearchParams(location.search);
+    newSearchParams.delete('details');
+    navigate({ search: newSearchParams.toString() });
+  }, [navigate, location.search]);
 
   const handleMainClick = useCallback(() => {
     if (selectedItem) {
@@ -124,82 +143,52 @@ const App: React.FC = () => {
 
   return (
     <div className="container">
-      <Header />
-      <div className="search-container">
-        <SearchInputField
-          placeholder="Search Pokémon"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          onEnterPress={handleSearch}
+      <div className={`app ${theme}`}>
+        <ThemeSwitcher />
+        <Header />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearch={handleSearch}
           onInitialFetch={handleInitialFetch}
         />
-        <Button text="Search" onClick={handleSearch} />
-      </div>
-      <div className="main-content">
-        <Main
+        <MainContent
           isLoading={isLoading}
-          items={items}
-          error={error}
           onItemClick={handleItemClick}
           onClick={handleMainClick}
         />
-        <Outlet />
-      </div>
-      {!isLoading && items.length > 0 && (
-        <Pagination
+        <PaginationWrapper
+          isLoading={isLoading}
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      )}
-      <Listeners
-        searchQuery={searchQuery}
-        page={currentPage}
-        onDataFetched={handleDataFetched}
-        onError={handleError}
-        triggerFetch={triggerFetch}
-      />
+        <Listeners
+          searchQuery={searchQuery}
+          page={currentPage}
+          onDataFetched={handleDataFetched}
+          onError={handleError}
+          triggerFetch={triggerFetch}
+        />
+        <Flyout />
+      </div>
     </div>
   );
 };
 
 const AppWrapper: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="details/:id" element={<ItemDetailsWrapper />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<ItemDetailsWrapper />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
-};
-
-const ItemDetailsWrapper: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
-  useEffect(() => {
-    const itemId = location.pathname.split('/').pop();
-    if (itemId) {
-      const fetchItemDetails = async (id: string) => {
-        const { data } = await fetchData(id);
-        setSelectedItem(data);
-      };
-      fetchItemDetails(itemId);
-    }
-  }, [location.pathname]);
-
-  const handleCloseDetails = useCallback(() => {
-    setSelectedItem(null);
-    navigate('/');
-  }, [navigate]);
-
-  return selectedItem ? (
-    <ItemDetails item={selectedItem} onClose={handleCloseDetails} />
-  ) : null;
 };
 
 export default AppWrapper;

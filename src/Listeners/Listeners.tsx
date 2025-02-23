@@ -1,5 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { fetchData } from '../API/fetchData';
+import { useDispatch } from 'react-redux';
+import { setItems, setError, setLoading } from '../Store/resultsSlice';
 
 interface ListenersProps {
   triggerFetch: boolean;
@@ -22,7 +24,11 @@ const useFetchData = ({
   onDataFetched,
   onError
 }: ListenersProps) => {
+  const dispatch = useDispatch();
+
   const handleFetchData = useCallback(async () => {
+    dispatch(setLoading(true));
+
     try {
       const result = await fetchData(
         searchQuery,
@@ -31,23 +37,41 @@ const useFetchData = ({
         orderBy,
         select
       );
-      onDataFetched(result);
-      console.log('Data fetched:', result);
+
+      if (result.data) {
+        dispatch(setItems(result.data));
+        onDataFetched(result);
+      } else {
+      }
     } catch (error) {
       if (error instanceof Error) {
-        onError(error.message);
+        const errorMessage = error.message;
+        dispatch(setError(errorMessage));
+        onError(errorMessage);
       } else {
         const errorMessage = 'Unknown error occurred';
+        dispatch(setError(errorMessage));
         onError(errorMessage);
       }
+    } finally {
+      dispatch(setLoading(false));
     }
-  }, [searchQuery, page, pageSize, orderBy, select, onDataFetched, onError]);
+  }, [
+    searchQuery,
+    page,
+    pageSize,
+    orderBy,
+    select,
+    onDataFetched,
+    onError,
+    dispatch
+  ]);
 
   useEffect(() => {
     if (triggerFetch) {
       handleFetchData();
     }
-  }, [triggerFetch, handleFetchData]);
+  }, [triggerFetch, handleFetchData, page, searchQuery]);
 };
 
 const Listeners: React.FC<ListenersProps> = (props) => {

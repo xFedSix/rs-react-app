@@ -5,36 +5,37 @@ export const fetchData = async (
   orderBy = '',
   select = ''
 ) => {
+  if (!import.meta.env.VITE_API_KEY) {
+    throw new Error('API key is missing');
+  }
+
   const baseUrl = 'https://api.pokemontcg.io/v2/cards';
   const queryString = searchQuery ? `q=name:${searchQuery}*` : '';
   const url = `${baseUrl}?page=${page}&pageSize=${pageSize}${
     queryString ? `&${queryString}` : ''
   }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
 
-  console.log('Constructed URL:', url);
-
   try {
-    const apiKey = import.meta.env.VITE_API_KEY;
-    if (!apiKey) {
-      throw new Error('API key is missing');
-    }
     const response = await fetch(url, {
       headers: {
-        'X-Api-Key': apiKey
+        'X-Api-Key': import.meta.env.VITE_API_KEY
       }
     });
-    console.log('response:', response);
+
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.statusText}`);
     }
 
-    const result = await response.json();
+    const data = await response.json();
+
     return {
-      data: result.data || result,
-      totalCount: result.totalCount || result.count || 0
+      data: data.data,
+      totalCount: data.totalCount ?? data.count ?? 0
     };
   } catch (error) {
-    console.error('Error occurred in fetchData:', error);
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred');
   }
 };

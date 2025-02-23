@@ -1,6 +1,10 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, updateSelectedItems } from '../../Store/Store';
 import './Result.scss';
+import { useEffect, useState } from 'react';
 
 export interface Item {
+  [x: string]: any;
   id: number | string;
   name: string;
   images: {
@@ -11,12 +15,28 @@ export interface Item {
 }
 
 export interface ResultsProps {
-  items: Item[] | Item;
-  error: string | null;
+  items?: Item[] | Item;
+  error?: string | null;
   onItemClick: (item: Item) => void;
 }
 
-const Result = ({ items, error, onItemClick }: ResultsProps) => {
+const Result = ({ onItemClick }: ResultsProps) => {
+  const dispatch = useDispatch();
+  const { items, error, selectedItems } = useSelector(
+    (state: RootState) => state.results
+  );
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  useEffect(() => {
+    if (Array.isArray(items)) {
+      setSelectAllChecked(
+        items.length > 0 &&
+          items.every((item) =>
+            selectedItems.some((selected) => selected.id === item.id)
+          )
+      );
+    }
+  }, [items, selectedItems]);
+
   if (error) {
     return (
       <div className="results-container">
@@ -35,11 +55,44 @@ const Result = ({ items, error, onItemClick }: ResultsProps) => {
   }
 
   const renderTableRows = (item: Item) => (
-    <tr key={item.id} onClick={() => onItemClick(item)}>
-      <td>
-        <img className="card-img" src={item.images.small} alt={item.name} />
+    <tr key={item.id}>
+      <td onClick={(e) => e.stopPropagation()}>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id={`pokemon-${item.id}`}
+            data-testid={`pokemon-checkbox-${item.id}`}
+            aria-label={`Select ${item.name}`}
+            checked={selectedItems.some((selected) => selected.id === item.id)}
+            onChange={(e) => {
+              e.stopPropagation();
+              if (e.target.checked) {
+                dispatch(updateSelectedItems([...selectedItems, item]));
+              } else {
+                dispatch(
+                  updateSelectedItems(
+                    selectedItems.filter((selected) => selected.id !== item.id)
+                  )
+                );
+              }
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`pokemon-${item.id}`}
+          ></label>
+        </div>
       </td>
-      <td>{item.name}</td>
+      <td>
+        <img
+          className="card-img"
+          src={item.images.small}
+          alt={item.name}
+          onClick={() => onItemClick(item)}
+        />
+      </td>
+      <td onClick={() => onItemClick(item)}>{item.name}</td>
       <td>
         {item.flavorText && item.flavorText.trim() !== ''
           ? item.flavorText
@@ -47,12 +100,46 @@ const Result = ({ items, error, onItemClick }: ResultsProps) => {
       </td>
     </tr>
   );
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAllChecked(checked);
+    const currentItems = Array.isArray(items) ? items : [items];
 
+    if (checked) {
+      const newSelection = [...selectedItems];
+      currentItems.forEach((item) => {
+        if (!selectedItems.some((selected) => selected.id === item.id)) {
+          newSelection.push(item);
+        }
+      });
+      dispatch(updateSelectedItems(newSelection));
+    } else {
+      const currentIds = currentItems.map((item) => item.id);
+      dispatch(
+        updateSelectedItems(
+          selectedItems.filter((item) => !currentIds.includes(item.id))
+        )
+      );
+    }
+  };
   return (
     <div className="results-container">
       <table className="results-table">
         <thead>
           <tr>
+            <th>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="selectAll"
+                  data-testid="select-all-checkbox"
+                  aria-label="Select all items"
+                  checked={selectAllChecked}
+                  onChange={(event) => handleSelectAll(event.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="selectAll"></label>
+              </div>
+            </th>
             <th>Image</th>
             <th>Pokémon Name</th>
             <th>Pokémon Description</th>

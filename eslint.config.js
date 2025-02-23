@@ -26,6 +26,7 @@ export default [
       '@typescript-eslint': tsPlugin
     },
     rules: {
+      'no-console': 'warn',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [

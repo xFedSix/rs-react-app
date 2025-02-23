@@ -1,11 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi } from 'vitest';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Main, { MainProps } from './Main';
-
+import resultsReducer from '../../Store/resultsSlice';
 import { Item } from '../Result/Result';
 
-// Mock Loader and Result components
 vi.mock('../Loader/Loader', () => ({
   __esModule: true,
   default: () => <div>Loading...</div>
@@ -43,6 +44,17 @@ vi.mock('../Result/Result', () => ({
   )
 }));
 
+const createMockStore = (initialState: any) => {
+  return configureStore({
+    reducer: {
+      results: resultsReducer
+    },
+    preloadedState: {
+      results: initialState
+    }
+  });
+};
+
 describe('Main', () => {
   const mockItems: Item[] = [
     {
@@ -66,38 +78,52 @@ describe('Main', () => {
   ];
 
   const defaultProps: MainProps = {
-    isLoading: false,
-    items: mockItems,
-    error: null,
     onItemClick: vi.fn(),
-    onClick: vi.fn()
+    onClick: vi.fn(),
+    isLoading: false
+  };
+
+  const renderWithProvider = (props: MainProps, storeState = {}) => {
+    const store = createMockStore({
+      items: mockItems,
+      error: null,
+      isLoading: false,
+      selectedItems: [],
+      ...storeState
+    });
+
+    return render(
+      <Provider store={store}>
+        <Main {...props} />
+      </Provider>
+    );
   };
 
   it('renders loading state', () => {
-    render(<Main {...defaultProps} isLoading={true} />);
+    renderWithProvider(defaultProps, { isLoading: true });
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('renders results when not loading', () => {
-    render(<Main {...defaultProps} />);
+    renderWithProvider(defaultProps);
     expect(screen.getByText('Results')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
 
   it('renders error message', () => {
-    render(<Main {...defaultProps} error="Test error" />);
+    renderWithProvider(defaultProps, { error: 'Test error' });
     expect(screen.getByText('Error: Test error')).toBeInTheDocument();
   });
 
   it('handles item click', () => {
-    render(<Main {...defaultProps} />);
+    renderWithProvider(defaultProps);
     fireEvent.click(screen.getByText('Item 1'));
     expect(defaultProps.onItemClick).toHaveBeenCalledWith(mockItems[0]);
   });
 
   it('handles section click', () => {
-    render(<Main {...defaultProps} />);
+    renderWithProvider(defaultProps);
     fireEvent.click(screen.getByText('Results'));
     expect(defaultProps.onClick).toHaveBeenCalled();
   });
