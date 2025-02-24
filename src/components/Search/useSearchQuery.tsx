@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const useSearchQuery = (initialQuery: string) => {
-  const [searchQueryLocal, setSearchQuery] = useState<string>(() => {
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
     const saved = localStorage.getItem('searchQuery');
     return saved !== null ? saved : initialQuery;
   });
@@ -27,7 +27,7 @@ const useSearchQuery = (initialQuery: string) => {
     }
   }, [handleChange, initialQuery]);
 
-  return [searchQueryLocal, handleChange] as const;
+  return [searchQuery, handleChange] as const;
 };
 
 export default useSearchQuery;

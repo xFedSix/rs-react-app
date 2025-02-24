@@ -7,27 +7,26 @@ import {
   useLocation
 } from 'react-router-dom';
 import './App.css';
-import Listeners from './Listeners/Listeners';
 import { Item } from './components/Result/Result';
-import { fetchData } from './API/fetchData';
 import Header from './components/Header/Header';
 import Flyout from './components/Flyout/Flyout';
 import NotFound from './components/NotFound/NotFound';
 import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
 import { useDispatch } from 'react-redux';
-import { setLoading, setItems, setError } from './Store/resultsSlice';
+import { setItems, setError } from './Store/resultsSlice';
 import SearchBar from './components/Search/SearchBar';
 import MainContent from './components/Main/MainContent';
 import PaginationWrapper from './components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
 import { ThemeProvider } from './context/ThemeContext';
 import { useTheme } from './context/useTheme';
-import useSearchQuery from './components/Search/useSearchQuery';
+import { useFetchItemsQuery } from './API/ApiSlice';
 
 const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [triggerFetch, setTriggerFetch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    const savedQuery = localStorage.getItem('searchQuery');
+    return savedQuery !== null ? savedQuery : '';
+  });
   const navigate = useNavigate();
   const [selectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,20 +34,21 @@ const App: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const [searchQueryLocal] = useSearchQuery('');
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data, error, isLoading } = useFetchItemsQuery({
+    searchQuery,
+    page: currentPage,
+    pageSize: 9,
+    orderBy: '',
+    select: ''
+  });
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const page = parseInt(searchParams.get('page') || '1', 10);
     setCurrentPage(page);
   }, [location.search]);
+
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
@@ -60,54 +60,21 @@ const App: React.FC = () => {
     []
   );
 
-  const handleSearch = useCallback(() => {
-    const trimmedQuery = searchQuery.trim();
+  const handleSearch = useCallback((query: string) => {
+    const trimmedQuery = query.trim();
     setSearchQuery(trimmedQuery);
     setCurrentPage(1);
-    dispatch(setLoading(true));
-    setTriggerFetch(true);
-  }, [dispatch, searchQuery]);
+  }, []);
 
-  const handleDataFetched = useCallback(
-    ({ data, totalCount }: { data: Item[]; totalCount: number }) => {
-      dispatch(setItems(data));
-      dispatch(setLoading(false));
-      dispatch(setError(null));
-      setTriggerFetch(false);
-      setTotalPages(Math.ceil(totalCount / 9));
-    },
-    [dispatch]
-  );
-
-  const handleError = useCallback(
-    (error: string) => {
-      setError(error);
-      dispatch(setLoading(false));
-      setTriggerFetch(false);
-    },
-    [dispatch]
-  );
-
-  const handleInitialFetch = useCallback(async () => {
-    dispatch(setLoading(true));
-    try {
-      const { data, totalCount } = await fetchData(searchQueryLocal);
-      dispatch(setItems(data));
-      dispatch(setLoading(false));
-      dispatch(setError(null));
-      setTotalPages(Math.ceil(totalCount / 9));
-      handleDataFetched({ data, totalCount });
-    } catch (error) {
-      if (error instanceof Error) {
-        handleError(error.message);
-      } else {
-        handleError(String(error));
-      }
-    }
-  }, [dispatch, handleDataFetched, handleError, searchQueryLocal]);
   useEffect(() => {
-    handleInitialFetch();
-  }, [handleInitialFetch]);
+    if (data) {
+      dispatch(setItems(data.data));
+      setTotalPages(Math.ceil(data.totalCount / 9));
+    }
+    if (error) {
+      dispatch(setError('Error loading data'));
+    }
+  }, [data, error, dispatch]);
 
   const handleItemClick = useCallback(
     (item: Item) => {
@@ -136,7 +103,6 @@ const App: React.FC = () => {
       const searchParams = new URLSearchParams(location.search);
       searchParams.set('page', page.toString());
       navigate(`/?${searchParams.toString()}`);
-      setTriggerFetch(true);
     },
     [navigate, location.search]
   );
@@ -150,7 +116,6 @@ const App: React.FC = () => {
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
           onSearch={handleSearch}
-          onInitialFetch={handleInitialFetch}
         />
         <MainContent
           isLoading={isLoading}
@@ -162,13 +127,6 @@ const App: React.FC = () => {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-        />
-        <Listeners
-          searchQuery={searchQuery}
-          page={currentPage}
-          onDataFetched={handleDataFetched}
-          onError={handleError}
-          triggerFetch={triggerFetch}
         />
         <Flyout />
       </div>

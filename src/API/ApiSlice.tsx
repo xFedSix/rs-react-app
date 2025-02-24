@@ -8,7 +8,7 @@ export const apiSlice = createApi({
     fetchItems: builder.query<
       { data: Item[]; totalCount: number },
       {
-        searchQuery: string;
+        searchQuery?: string;
         page: number;
         pageSize: number;
         orderBy: string;

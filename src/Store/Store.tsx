@@ -1,5 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import resultsReducer from './resultsSlice';
+import { apiSlice } from '../API/ApiSlice';
 
 export interface Item {
   id: number | string;
@@ -46,16 +47,16 @@ export default resultsSlice.reducer;
 
 const customLoggerMiddleware =
   () => (next: (action: any) => any) => (action: any) => {
-    let result = next(action);
-    return result;
+    return next(action);
   };
 
 export const store = configureStore({
   reducer: {
-    results: resultsReducer
+    results: resultsReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(customLoggerMiddleware)
+    getDefaultMiddleware().concat(apiSlice.middleware, customLoggerMiddleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;
