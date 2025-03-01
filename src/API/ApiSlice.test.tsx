@@ -1,4 +1,4 @@
-import { setupApiStore } from '../Test/testUtils';
+import { setupApiStore } from '../app/Test/testUtils';
 import { apiSlice } from './ApiSlice';
 
 const storeRef = setupApiStore(apiSlice);

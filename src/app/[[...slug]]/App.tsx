@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   BrowserRouter as Router,
@@ -7,20 +8,22 @@ import {
   useLocation
 } from 'react-router-dom';
 import './App.css';
-import { Item } from './components/Result/Result';
-import Header from './components/Header/Header';
-import Flyout from './components/Flyout/Flyout';
-import NotFound from './components/NotFound/NotFound';
-import ItemDetailsWrapper from './components/ItemDetails/ItemDetailsWrapper';
+import { Item } from '../components/Result/Result';
+import Header from '../components/Header/Header';
+import Flyout from '../components/Flyout/Flyout';
+import NotFound from '../components/NotFound/NotFound';
+import ItemDetailsWrapper from '../components/ItemDetails/ItemDetailsWrapper';
 import { useDispatch } from 'react-redux';
-import { setItems, setError } from './Store/resultsSlice';
-import SearchBar from './components/Search/SearchBar';
-import MainContent from './components/Main/MainContent';
-import PaginationWrapper from './components/Pagination/PaginationWrapper';
-import { ThemeSwitcher } from './components/ThemeSwitcher/ThemeSwitcher';
-import { ThemeProvider } from './context/ThemeContext';
-import { useTheme } from './context/useTheme';
-import { useFetchItemsQuery } from './API/ApiSlice';
+import { setItems, setError } from '../Store/resultsSlice';
+import SearchBar from '../components/Search/SearchBar';
+import MainContent from '../components/Main/MainContent';
+import PaginationWrapper from '../components/Pagination/PaginationWrapper';
+import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
+import { ThemeProvider } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
+import { useFetchItemsQuery } from '../../API/ApiSlice';
+import store from '../Store/Store';
+import { Provider } from 'react-redux';
 
 const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(() => {
@@ -136,16 +139,18 @@ const App: React.FC = () => {
 
 const AppWrapper: React.FC = () => {
   return (
-    <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<ItemDetailsWrapper />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<ItemDetailsWrapper />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </Provider>
   );
 };
 
