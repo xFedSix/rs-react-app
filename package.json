@@ -7,13 +7,14 @@
     "dev": "next dev",
     "build": "tsc -b && next build",
     "start": "next start",
-    "lint": "next eslint .",
+    "lint": "next lint .",
     "format:fix": "prettier --write .",
     "prepare": "husky && chmod ug+x .husky/*",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@next/eslint-plugin-next": "^15.2.0",
     "@reduxjs/toolkit": "^2.5.1",
     "@testing-library/user-event": "^14.6.1",
     "@vitest/coverage-v8": "^3.0.5",
