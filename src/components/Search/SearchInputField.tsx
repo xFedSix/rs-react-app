@@ -1,5 +1,4 @@
 import useSearchQuery from './useSearchQuery';
-import './SearchInputField.scss';
 
 interface SearchInputFieldProps {
   placeholder: string;

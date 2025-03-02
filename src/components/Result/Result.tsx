@@ -1,6 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSelectedItems } from '../../Store/Store';
-import './Result.scss';
 import { useEffect, useState } from 'react';
 
 export interface Item {

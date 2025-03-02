@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../Store/Store';
 import { updateSelectedItems } from '../../Store/resultsSlice';
-import './Flyout.scss';
 
 const Flyout: React.FC = () => {
   const dispatch = useDispatch();

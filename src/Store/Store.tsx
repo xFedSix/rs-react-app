@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import resultsReducer from './resultsSlice';
-import { apiSlice } from '../../API/ApiSlice';
+import { apiSlice } from '../pages/api/ApiSlice';
 
 export interface Item {
   id: number | string;

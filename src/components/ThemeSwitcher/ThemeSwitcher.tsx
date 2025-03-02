@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTheme } from '../../context/useTheme';
-import './ThemeSwitcher.scss';
 
 export const ThemeSwitcher: React.FC = () => {
   const { theme, toggleTheme } = useTheme();

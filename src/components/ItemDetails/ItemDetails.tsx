@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Item } from '../Result/Result';
 import Loader from '../Loader/Loader';
-import './ItemDetails.scss';
 
 interface ItemDetailsProps {
   item: Item;

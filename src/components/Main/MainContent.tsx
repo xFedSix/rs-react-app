@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Main from '../Main/Main';
 import { Item } from '../Result/Result';
-import './MainContent.scss';
 
 interface MainContentProps {
   isLoading: boolean;

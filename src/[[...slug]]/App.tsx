@@ -7,7 +7,6 @@ import {
   useNavigate,
   useLocation
 } from 'react-router-dom';
-import './App.css';
 import { Item } from '../components/Result/Result';
 import Header from '../components/Header/Header';
 import Flyout from '../components/Flyout/Flyout';
@@ -21,7 +20,7 @@ import PaginationWrapper from '../components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
 import { ThemeProvider } from '../context/ThemeContext';
 import { useTheme } from '../context/useTheme';
-import { useFetchItemsQuery } from '../../API/ApiSlice';
+import { useFetchItemsQuery } from '../pages/api/ApiSlice';
 import store from '../Store/Store';
 import { Provider } from 'react-redux';
 

@@ -1,5 +1,3 @@
-import './Loader.css';
-
 interface LoaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const Loader: React.FC<LoaderProps> = (props) => {
