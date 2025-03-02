@@ -1,33 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 const useSearchQuery = (initialQuery: string) => {
-  const [searchQuery, setSearchQuery] = useState<string>(() => {
-    const saved = localStorage.getItem('searchQuery');
-    return saved !== null ? saved : initialQuery;
-  });
-
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
-      const query = event.target.value;
-      try {
-        localStorage.setItem('searchQuery', query);
-        setSearchQuery(query);
-      } catch (error) {}
-    },
-    []
-  );
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
 
   useEffect(() => {
-    const saved = localStorage.getItem('searchQuery');
-    if (saved && saved !== initialQuery) {
-      const event = {
-        target: { value: saved }
-      } as React.ChangeEvent<HTMLInputElement>;
-      handleChange(event);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('searchQuery');
+      if (typeof saved === 'string') {
+        setSearchQuery(saved);
+      }
     }
-  }, [handleChange, initialQuery]);
+  }, [initialQuery]);
 
-  return [searchQuery, handleChange] as const;
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof searchQuery === 'string') {
+      localStorage.setItem('searchQuery', searchQuery);
+    }
+  }, [searchQuery]);
+
+  return [searchQuery, setSearchQuery] as const;
 };
 
 export default useSearchQuery;

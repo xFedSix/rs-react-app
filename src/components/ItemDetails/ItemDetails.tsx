@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Item } from '../Result/Result';
 import Loader from '../Loader/Loader';
+import { fetchItemDetails } from '../../utils/pokemonApi';
 
 interface ItemDetailsProps {
   item: Item;
@@ -19,15 +20,8 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
 
     const fetchDetails = async () => {
       try {
-        const response = await fetch(
-          `https://api.pokemontcg.io/v2/cards/${item.id}`
-        );
-        const data = await response.json();
-        if (data.error) {
-          setDetails(null);
-        } else {
-          setDetails(data.data);
-        }
+        const result = await fetchItemDetails(item.id.toString());
+        setDetails(result);
       } catch (error) {
       } finally {
         setLoading(false);

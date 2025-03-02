@@ -1,59 +1,48 @@
-'use client';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-  useLocation
-} from 'react-router-dom';
 import { Item } from '../components/Result/Result';
 import Header from '../components/Header/Header';
 import Flyout from '../components/Flyout/Flyout';
-import NotFound from '../components/NotFound/NotFound';
-import ItemDetailsWrapper from '../components/ItemDetails/ItemDetailsWrapper';
 import { useDispatch } from 'react-redux';
 import { setItems, setError } from '../Store/resultsSlice';
 import SearchBar from '../components/Search/SearchBar';
 import MainContent from '../components/Main/MainContent';
 import PaginationWrapper from '../components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
-import { ThemeProvider } from '../context/ThemeContext';
 import { useTheme } from '../context/useTheme';
-import { useFetchItemsQuery } from '../pages/api/ApiSlice';
-import store from '../Store/Store';
-import { Provider } from 'react-redux';
+import ItemDetails from '../components/ItemDetails/ItemDetails';
+import { fetchItems } from '../utils/pokemonApi';
+import { useSearchParams } from 'next/navigation';
 
-const App: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState(() => {
-    const savedQuery = localStorage.getItem('searchQuery');
-    return savedQuery !== null ? savedQuery : '';
-  });
-  const navigate = useNavigate();
-  const [selectedItem] = useState<Item | null>(null);
+export interface AppProps {
+  initialData: { data: Item[]; totalCount: number };
+}
+
+const App: React.FC<AppProps> = ({ initialData }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const location = useLocation();
   const dispatch = useDispatch();
   const { theme } = useTheme();
-
-  const { data, error, isLoading } = useFetchItemsQuery({
-    searchQuery,
-    page: currentPage,
-    pageSize: 9,
-    orderBy: '',
-    select: ''
-  });
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    setCurrentPage(page);
-  }, [location.search]);
+  const [data, setData] = useState<{ data: Item[]; totalCount: number } | null>(
+    initialData
+  );
+  const [error, setErrorState] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedQuery = localStorage.getItem('searchQuery');
+      if (savedQuery !== null) {
+        setSearchQuery(savedQuery);
+      }
+    }
+  }, []);
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,29 +58,38 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (data) {
-      dispatch(setItems(data.data));
-      setTotalPages(Math.ceil(data.totalCount / 9));
-    }
-    if (error) {
-      dispatch(setError('Error loading data'));
-    }
-  }, [data, error, dispatch]);
+    const fetchData = async () => {
+      setIsLoading(true);
+      setErrorState(null);
+      try {
+        const result = await fetchItems({
+          searchQuery,
+          page: currentPage,
+          pageSize: 9,
+          orderBy: '',
+          select: ''
+        });
+        setData(result);
+        dispatch(setItems(result.data));
+        setTotalPages(Math.ceil(result.totalCount / 9));
+      } catch (err: any) {
+        setErrorState(err.message || 'Error loading data');
+        dispatch(setError(err.message || 'Error loading data'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const handleItemClick = useCallback(
-    (item: Item) => {
-      const newSearchParams = new URLSearchParams(location.search);
-      newSearchParams.set('details', item.id.toString());
-      navigate({ search: newSearchParams.toString() });
-    },
-    [navigate, location.search]
-  );
+    fetchData();
+  }, [searchQuery, currentPage, dispatch]);
+
+  const handleItemClick = useCallback((item: Item) => {
+    setSelectedItem(item);
+  }, []);
 
   const handleCloseDetails = useCallback(() => {
-    const newSearchParams = new URLSearchParams(location.search);
-    newSearchParams.delete('details');
-    navigate({ search: newSearchParams.toString() });
-  }, [navigate, location.search]);
+    setSelectedItem(null);
+  }, []);
 
   const handleMainClick = useCallback(() => {
     if (selectedItem) {
@@ -99,16 +97,10 @@ const App: React.FC = () => {
     }
   }, [selectedItem, handleCloseDetails]);
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setCurrentPage(page);
-      const searchParams = new URLSearchParams(location.search);
-      searchParams.set('page', page.toString());
-      navigate(`/?${searchParams.toString()}`);
-    },
-    [navigate, location.search]
-  );
-
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+  const details = searchParams.get('details');
   return (
     <div className="container">
       <div className={`app ${theme}`}>
@@ -136,21 +128,4 @@ const App: React.FC = () => {
   );
 };
 
-const AppWrapper: React.FC = () => {
-  return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<App />}>
-              <Route index element={<ItemDetailsWrapper />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </Router>
-      </ThemeProvider>
-    </Provider>
-  );
-};
-
-export default AppWrapper;
+export default App;
