@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { Item } from '../Result/Result';
 import Loader from '../Loader/Loader';
 import { fetchItemDetails } from '../../utils/pokemonApi';
@@ -11,6 +12,7 @@ interface ItemDetailsProps {
 const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
   const [details, setDetails] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     if (!item || !item.id) {
@@ -23,6 +25,7 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
         const result = await fetchItemDetails(item.id.toString());
         setDetails(result);
       } catch (error) {
+        console.error('Error fetching details:', error);
       } finally {
         setLoading(false);
       }
@@ -30,6 +33,20 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
 
     fetchDetails();
   }, [item]);
+
+  const handleCloseDetails = useCallback(() => {
+    const currentQuery = { ...router.query };
+    delete currentQuery.details;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery
+      },
+      undefined,
+      { shallow: true }
+    );
+    onClose();
+  }, [router, onClose]);
 
   if (loading) {
     return <Loader />;
@@ -41,11 +58,11 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
 
   return (
     <div className="item-details">
-      <button onClick={onClose}>Close</button>
+      <button onClick={handleCloseDetails}>Close</button>
       <h2>{details.name}</h2>
       <img
         className="details-img"
-        src={details.images.large}
+        src={details.images?.large}
         alt={details.name}
       />
       <p>{details.flavorText}</p>

@@ -12,6 +12,7 @@ import { useTheme } from '../context/useTheme';
 import ItemDetails from '../components/ItemDetails/ItemDetails';
 import { fetchItems } from '../utils/pokemonApi';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 export interface AppProps {
   initialData: { data: Item[]; totalCount: number };
@@ -30,6 +31,7 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   const [error, setErrorState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     document.body.className = theme;
@@ -82,10 +84,25 @@ const App: React.FC<AppProps> = ({ initialData }) => {
 
     fetchData();
   }, [searchQuery, currentPage, dispatch]);
+  useEffect(() => {
+    const details = searchParams.get('details');
+    if (details) {
+      const item = data?.data.find((i) => i.id === details);
+      if (item) {
+        setSelectedItem(item);
+      }
+    } else {
+      setSelectedItem(null);
+    }
+  }, [searchParams, data]);
 
-  const handleItemClick = useCallback((item: Item) => {
-    setSelectedItem(item);
-  }, []);
+  const handleItemClick = useCallback(
+    (item: Item) => {
+      setSelectedItem(item);
+      router.push(`/?details=${item.id}`, undefined, { shallow: true });
+    },
+    [router]
+  );
 
   const handleCloseDetails = useCallback(() => {
     setSelectedItem(null);
@@ -115,6 +132,8 @@ const App: React.FC<AppProps> = ({ initialData }) => {
           isLoading={isLoading}
           onItemClick={handleItemClick}
           onClick={handleMainClick}
+          selectedItem={selectedItem}
+          onCloseDetails={() => setSelectedItem(null)}
         />
         <PaginationWrapper
           isLoading={isLoading}

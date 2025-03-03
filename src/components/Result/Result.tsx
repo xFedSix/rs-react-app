@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, updateSelectedItems } from '../../Store/Store';
-import { useEffect, useState } from 'react';
+import { RootState } from '../../Store/Store';
+import { updateSelectedItems } from '../../Store/resultsSlice';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export interface Item {
   [x: string]: any;
@@ -19,36 +20,35 @@ export interface ResultsProps {
   onItemClick: (item: Item) => void;
 }
 
-const Result = ({ onItemClick }: ResultsProps) => {
+export const Result: React.FC<ResultProps> = ({ items, onItemClick }) => {
   const dispatch = useDispatch();
-  const { items, error, selectedItems } = useSelector(
-    (state: RootState) => state.results
+  const selectedItems = useSelector(
+    (state: RootState) => state.results.selectedItems
   );
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   useEffect(() => {
-    if (Array.isArray(items)) {
-      setSelectAllChecked(
-        items.length > 0 &&
-          items.every((item) =>
-            selectedItems.some((selected) => selected.id === item.id)
-          )
-      );
-    }
-  }, [items, selectedItems]);
+    setSelectAllChecked(selectedItems.length === items.length);
+  }, [selectedItems, items]);
 
-  if (error) {
-    return (
-      <div className="results-container">
-        <table className="results-table">
-          <tbody>
-            <tr>
-              <td colSpan={2}>{error}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+  const handleSelectAll = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        const newSelection = Array.isArray(items)
+          ? items.map((item) => ({
+              id: item.id,
+              name: item.name,
+              images: item.images,
+              flavorText: item.flavorText
+            }))
+          : [];
+        dispatch(updateSelectedItems(newSelection));
+      } else {
+        dispatch(updateSelectedItems([]));
+      }
+      setSelectAllChecked(checked);
+    },
+    [items, dispatch]
+  );
   if (!items || (Array.isArray(items) && items.length === 0)) {
     return <div>No results found.</div>;
   }
@@ -99,27 +99,6 @@ const Result = ({ onItemClick }: ResultsProps) => {
       </td>
     </tr>
   );
-  const handleSelectAll = (checked: boolean) => {
-    setSelectAllChecked(checked);
-    const currentItems = Array.isArray(items) ? items : [items];
-
-    if (checked) {
-      const newSelection = [...selectedItems];
-      currentItems.forEach((item) => {
-        if (!selectedItems.some((selected) => selected.id === item.id)) {
-          newSelection.push(item);
-        }
-      });
-      dispatch(updateSelectedItems(newSelection));
-    } else {
-      const currentIds = currentItems.map((item) => item.id);
-      dispatch(
-        updateSelectedItems(
-          selectedItems.filter((item) => !currentIds.includes(item.id))
-        )
-      );
-    }
-  };
   return (
     <div className="results-container">
       <table className="results-table">
