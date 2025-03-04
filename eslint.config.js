@@ -29,10 +29,7 @@ export default [
       'no-console': 'warn',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true }
-      ],
+      'react-refresh/only-export-components': 'off',
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       quotes: ['error', 'single']

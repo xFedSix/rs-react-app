@@ -35,9 +35,14 @@ body {
     color 0.3s;
 }
 
+body.dark {
+  background-color: #464c53;
+  color: #d6afaf;
+}
+
 .app.dark {
   --bg-color: #1e1e1e;
-  --text-color: #4e5fbc;
+  --text-color: #e0e0e0;
   --button-bg: #2c2c2c;
   --border-color: #444444;
 }
@@ -325,7 +330,7 @@ button:focus-visible {
 }
 
 .results-table th {
-  background-color: #f2f2f2;
+  background-color: #726767;
   text-align: center;
 }
 .card-img {
