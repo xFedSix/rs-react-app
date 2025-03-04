@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SearchBarProps {
-  searchQuery: string;
-  onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSearch: (query: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  searchQuery,
-  onSearchChange,
-  onSearch
-}) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    onSearch('');
+  }, [onSearch]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearch = () => {
+    onSearch(searchQuery.trim());
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      onSearch(searchQuery);
+      handleSearch();
     }
   };
 
@@ -23,10 +31,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
         type="text"
         placeholder="Search for Pokémon..."
         value={searchQuery}
-        onChange={onSearchChange}
+        onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
       />
-      <button onClick={() => onSearch(searchQuery)}>Search</button>
+      <button onClick={handleSearch}>Search</button>
     </div>
   );
 };

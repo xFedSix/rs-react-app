@@ -25,7 +25,6 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
         const result = await fetchItemDetails(item.id.toString());
         setDetails(result);
       } catch (error) {
-        console.error('Error fetching details:', error);
       } finally {
         setLoading(false);
       }

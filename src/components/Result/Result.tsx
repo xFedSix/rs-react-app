@@ -2,23 +2,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../Store/Store';
 import { updateSelectedItems } from '../../Store/resultsSlice';
 import React, { useCallback, useEffect, useState } from 'react';
-
-export interface Item {
-  [x: string]: any;
-  id: number | string;
-  name: string;
-  images: {
-    small: string;
-    large: string;
-  };
-  flavorText: string | undefined;
-}
-
-export interface ResultsProps {
-  items?: Item[] | Item;
-  error?: string | null;
-  onItemClick: (item: Item) => void;
-}
+import { Item } from '../../types/types';
+import { ResultProps } from '../../types/types';
 
 export const Result: React.FC<ResultProps> = ({ items, onItemClick }) => {
   const dispatch = useDispatch();

@@ -1,10 +1,7 @@
 import React from 'react';
 import AppWrapper from '../[[...slug]]/AppWrapper';
 import { Item } from '../components/Result/Result';
-
-export interface AppProps {
-  initialData: { data: Item[]; totalCount: number };
-}
+import { AppProps } from '../types';
 
 const HomePage: React.FC<AppProps> = ({ initialData }) => {
   return (

@@ -117,7 +117,6 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
-  const details = searchParams.get('details');
   return (
     <div className="container">
       <div className={`app ${theme}`}>
