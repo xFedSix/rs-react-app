@@ -2,7 +2,29 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SearchBar from './SearchBar';
 
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string | number, value: { toString: () => any }) => {
+      store[key as string] = value.toString();
+    },
+    clear: () => {
+      store = {};
+    },
+    removeItem: (key: string | number) => {
+      delete store[key];
+    }
+  };
+})();
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock
+});
+
 describe('SearchBar', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
   it('renders the search input and button', () => {
     render(<SearchBar onSearch={() => {}} />);
     expect(
@@ -52,5 +74,19 @@ describe('SearchBar', () => {
     fireEvent.keyDown(inputElement, { key: 'Enter' });
 
     expect(onSearchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should save the entered value to localStorage', () => {
+    render(<SearchBar onSearch={() => {}} />);
+    const inputElement = screen.getByPlaceholderText('Search for Pokémon...');
+    fireEvent.change(inputElement, { target: { value: 'Pikachu' } });
+    expect(localStorage.getItem('searchQuery')).toBe('Pikachu');
+  });
+
+  it('should load the value from localStorage on initial render', () => {
+    localStorage.setItem('searchQuery', 'Charmander');
+    render(<SearchBar onSearch={() => {}} />);
+    const inputElement = screen.getByPlaceholderText('Search for Pokémon...');
+    expect(inputElement).toHaveValue('Charmander');
   });
 });

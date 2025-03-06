@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -6,6 +6,22 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [internalSearchQuery, setInternalSearchQuery] = useState<string>('');
+  const isFirstLoad = useRef(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('searchQuery');
+      if (typeof saved === 'string' && saved !== '') {
+        setInternalSearchQuery(saved);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && internalSearchQuery !== '') {
+      localStorage.setItem('searchQuery', internalSearchQuery);
+    }
+  }, [internalSearchQuery]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +31,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   );
 
   const handleSearch = useCallback(() => {
-    onSearch(internalSearchQuery.trim());
+    const trimmedQuery = internalSearchQuery.trim();
+    if (trimmedQuery !== '') {
+      localStorage.setItem('searchQuery', trimmedQuery);
+    }
+    onSearch(trimmedQuery);
   }, [internalSearchQuery, onSearch]);
 
   const handleKeyDown = useCallback(

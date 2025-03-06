@@ -42,13 +42,20 @@ const App: React.FC<AppProps> = ({ initialData }) => {
       const savedQuery = localStorage.getItem('searchQuery');
       if (savedQuery !== null) {
         setSearchQuery(savedQuery);
+        setIsSearchRequested(true);
+      } else {
+        setIsSearchRequested(true);
       }
     }
   }, []);
 
   const handleSearch = useCallback((query: string) => {
     const trimmedQuery = query.trim();
-    localStorage.removeItem('searchQuery');
+    if (trimmedQuery) {
+      localStorage.setItem('searchQuery', trimmedQuery);
+    } else {
+      localStorage.removeItem('searchQuery');
+    }
     setSearchQuery(trimmedQuery);
     setIsSearchRequested(true);
     setCurrentPage(1);
