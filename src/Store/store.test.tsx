@@ -3,6 +3,7 @@ import { setItems, setError, updateSelectedItems } from './resultsSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import resultsReducer from './resultsSlice';
 import type { Item } from './Store';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('Store Configuration', () => {
   const mockItem: Item = {

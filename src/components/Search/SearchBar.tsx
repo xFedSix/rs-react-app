@@ -29,12 +29,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     <div className="search-bar">
       <input
         type="text"
+        data-testid="search-input"
         placeholder="Search for Pokémon..."
         value={searchQuery}
         onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button data-testid="search-button" onClick={handleSearch}>
+        Search
+      </button>
     </div>
   );
 };

@@ -25,6 +25,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "types": [
+      "vitest/importMeta"
+    ],
     "plugins": [
       {
         "name": "next"

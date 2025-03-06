@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { useTheme } from '../../context/useTheme';
+import React from 'react';
 
 vi.mock('../../context/useTheme');
 

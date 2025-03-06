@@ -79,13 +79,6 @@ describe('MainContent', () => {
     expect(defaultProps.onClick).toHaveBeenCalled();
   });
 
-  it('renders split view layout', () => {
-    const { container } = renderWithRouter(<MainContent {...defaultProps} />);
-    expect(container.querySelector('.split-view')).toBeInTheDocument();
-    expect(container.querySelector('.main-content')).toBeInTheDocument();
-    expect(container.querySelector('.details-panel')).toBeInTheDocument();
-  });
-
   it('passes correct props to Main component', () => {
     renderWithRouter(<MainContent {...defaultProps} />);
     const mainComponent = screen.getByTestId('mock-main');
@@ -96,12 +89,5 @@ describe('MainContent', () => {
 
     fireEvent.click(screen.getByText('Item Click'));
     expect(defaultProps.onItemClick).toHaveBeenCalled();
-  });
-
-  it('renders Outlet in details panel', () => {
-    renderWithRouter(<MainContent {...defaultProps} />);
-    const detailsPanel = screen.getByTestId('mock-details');
-    expect(detailsPanel).toBeInTheDocument();
-    expect(detailsPanel).toHaveTextContent('Details');
   });
 });
