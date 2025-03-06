@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { fetchItems } from '../utils/pokemonApi';
-import { AppProps } from '../types';
+import { AppProps } from '../types/types';
 
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context

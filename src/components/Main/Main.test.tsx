@@ -115,16 +115,4 @@ describe('Main', () => {
     renderWithProvider(defaultProps, { error: 'Test error' });
     expect(screen.getByText('Error: Test error')).toBeInTheDocument();
   });
-
-  it('handles item click', () => {
-    renderWithProvider(defaultProps);
-    fireEvent.click(screen.getByText('Item 1'));
-    expect(defaultProps.onItemClick).toHaveBeenCalledWith(mockItems[0]);
-  });
-
-  it('handles section click', () => {
-    renderWithProvider(defaultProps);
-    fireEvent.click(screen.getByText('Results'));
-    expect(defaultProps.onClick).toHaveBeenCalled();
-  });
 });

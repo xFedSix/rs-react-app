@@ -1,20 +1,26 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import Pagination from './Pagination';
+import { vi } from 'vitest';
 
 describe('Pagination', () => {
   const handlePageChange = vi.fn();
-
+  const updateUrlAfterEachTest = () => {
+    window.history.replaceState({}, '', '/');
+  };
+  afterEach(() => {
+    updateUrlAfterEachTest();
+  });
   it('renders pagination buttons', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={1}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     expect(screen.getByText('First')).toBeInTheDocument();
     expect(screen.getByText('Previous')).toBeInTheDocument();
@@ -24,13 +30,13 @@ describe('Pagination', () => {
 
   it('handles page change', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={1}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Next'));
     expect(handlePageChange).toHaveBeenCalledWith(2);
@@ -44,9 +50,9 @@ describe('Pagination', () => {
     };
 
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination currentPage={1} totalPages={5} onPageChange={updateURL} />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Next'));
 
@@ -56,13 +62,13 @@ describe('Pagination', () => {
 
   it('disables First and Previous buttons on the first page', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={1}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     expect(screen.getByText('First')).toBeDisabled();
     expect(screen.getByText('Previous')).toBeDisabled();
@@ -72,13 +78,13 @@ describe('Pagination', () => {
 
   it('disables Next and Last buttons on the last page', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={5}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     expect(screen.getByText('First')).not.toBeDisabled();
     expect(screen.getByText('Previous')).not.toBeDisabled();
@@ -88,13 +94,13 @@ describe('Pagination', () => {
 
   it('handles invalid currentPage gracefully', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={10}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     expect(screen.getByText('Page 10 of 5')).toBeInTheDocument();
     expect(screen.getByText('First')).toBeDisabled();
@@ -105,13 +111,13 @@ describe('Pagination', () => {
 
   it('handles invalid totalPages gracefully', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={1}
           totalPages={-1}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     expect(screen.getByText('Page 1 of -1')).toBeInTheDocument();
     expect(screen.getByText('First')).toBeDisabled();
@@ -122,13 +128,13 @@ describe('Pagination', () => {
 
   it('handles clicking First button', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={3}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('First'));
     expect(handlePageChange).toHaveBeenCalledWith(1);
@@ -136,13 +142,13 @@ describe('Pagination', () => {
 
   it('handles clicking Previous button', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={3}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Previous'));
     expect(handlePageChange).toHaveBeenCalledWith(2);
@@ -150,13 +156,13 @@ describe('Pagination', () => {
 
   it('handles clicking Next button', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={3}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Next'));
     expect(handlePageChange).toHaveBeenCalledWith(4);
@@ -164,13 +170,13 @@ describe('Pagination', () => {
 
   it('handles clicking Last button', () => {
     render(
-      <Router>
+      <BrowserRouter>
         <Pagination
           currentPage={3}
           totalPages={5}
           onPageChange={handlePageChange}
         />
-      </Router>
+      </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Last'));
     expect(handlePageChange).toHaveBeenCalledWith(5);

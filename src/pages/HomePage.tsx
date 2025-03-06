@@ -1,7 +1,6 @@
 import React from 'react';
 import AppWrapper from '../[[...slug]]/AppWrapper';
-import { Item } from '../components/Result/Result';
-import { AppProps } from '../types';
+import { Item, AppProps } from '../types/types';
 
 const HomePage: React.FC<AppProps> = ({ initialData }) => {
   return (

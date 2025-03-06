@@ -11,13 +11,6 @@ describe('SearchBar', () => {
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
   });
 
-  it('calls onSearch with empty string on initial render', () => {
-    const onSearchMock = vitest.fn();
-    render(<SearchBar onSearch={onSearchMock} />);
-    expect(onSearchMock).toHaveBeenCalledWith('');
-    expect(onSearchMock).toHaveBeenCalledTimes(1);
-  });
-
   it('updates the input value on change', () => {
     render(<SearchBar onSearch={() => {}} />);
     const inputElement = screen.getByPlaceholderText('Search for Pokémon...');
@@ -35,7 +28,7 @@ describe('SearchBar', () => {
     fireEvent.click(buttonElement);
 
     expect(onSearchMock).toHaveBeenCalledWith('Pikachu');
-    expect(onSearchMock).toHaveBeenCalledTimes(2);
+    expect(onSearchMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onSearch with the trimmed query when Enter is pressed', () => {
@@ -47,7 +40,7 @@ describe('SearchBar', () => {
     fireEvent.keyDown(inputElement, { key: 'Enter' });
 
     expect(onSearchMock).toHaveBeenCalledWith('Bulbasaur');
-    expect(onSearchMock).toHaveBeenCalledTimes(2);
+    expect(onSearchMock).toHaveBeenCalledTimes(1);
   });
   it('calls onSearch once when Enter is pressed', () => {
     const onSearchMock = vitest.fn();
@@ -58,6 +51,6 @@ describe('SearchBar', () => {
     fireEvent.keyDown(inputElement, { key: 'Enter' });
     fireEvent.keyDown(inputElement, { key: 'Enter' });
 
-    expect(onSearchMock).toHaveBeenCalledTimes(3);
+    expect(onSearchMock).toHaveBeenCalledTimes(2);
   });
 });

@@ -2,17 +2,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../Store/Store';
 import { updateSelectedItems } from '../../Store/resultsSlice';
 import React, { useCallback, useEffect, useState } from 'react';
-import Item from '../../types/types';
-import { ResultProps } from '../../types/types';
 
-export const Result: React.FC<ResultProps> = ({ items, onItemClick }) => {
+import { Item, ResultsProps } from '../../types/types';
+
+export const Result: React.FC<ResultsProps> = ({ items, onItemClick }) => {
   const dispatch = useDispatch();
   const selectedItems = useSelector(
     (state: RootState) => state.results.selectedItems
   );
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   useEffect(() => {
-    setSelectAllChecked(selectedItems.length === items.length);
+    if (items) {
+      setSelectAllChecked(
+        selectedItems.length ===
+          (Array.isArray(items) ? items.length : items ? 1 : 0)
+      );
+    }
   }, [selectedItems, items]);
 
   const handleSelectAll = useCallback(
@@ -25,7 +30,16 @@ export const Result: React.FC<ResultProps> = ({ items, onItemClick }) => {
               images: item.images,
               flavorText: item.flavorText
             }))
-          : [];
+          : items
+            ? [
+                {
+                  id: items.id,
+                  name: items.name,
+                  images: items.images,
+                  flavorText: items.flavorText
+                }
+              ]
+            : [];
         dispatch(updateSelectedItems(newSelection));
       } else {
         dispatch(updateSelectedItems([]));

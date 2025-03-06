@@ -4,10 +4,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
-  build: {
-    sourcemap: true,
-    exclude: ['**/*']
-  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -18,8 +14,8 @@ export default defineConfig({
       include: ['src/**/*.tsx'],
       exclude: [
         'node_modules/',
-        '**/*.test.tsx',
-        '**/*.spec.tsx',
+        'src/**/*.test.tsx',
+        'src/**/*.spec.tsx',
         'src/setup.ts'
       ]
     }

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import HomePage from './HomePage';
+import HomePage from '../pages/HomePage';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../Store/Store';

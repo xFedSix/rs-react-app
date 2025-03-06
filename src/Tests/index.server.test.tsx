@@ -1,4 +1,4 @@
-import { getServerSideProps } from './index.server';
+import { getServerSideProps } from '../page-helper/index.server';
 import { fetchItems } from '../utils/pokemonApi';
 import { vi, describe, it, expect } from 'vitest';
 

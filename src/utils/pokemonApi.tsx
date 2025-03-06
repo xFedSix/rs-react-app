@@ -1,4 +1,4 @@
-import { Item } from '../components/Result/Result';
+import { Item } from '../types/types';
 
 const BASE_URL = 'https://api.pokemontcg.io/v2/';
 

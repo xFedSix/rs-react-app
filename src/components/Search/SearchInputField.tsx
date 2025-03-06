@@ -1,5 +1,3 @@
-import useSearchQuery from './useSearchQuery';
-
 interface SearchInputFieldProps {
   placeholder: string;
   value: string;
@@ -13,13 +11,11 @@ const SearchInputField: React.FC<SearchInputFieldProps> = ({
   onChange,
   onEnterPress
 }) => {
-  const [searchQuery, handleChange] = useSearchQuery(value);
-
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLInputElement>
   ): void => {
     if (event.key === 'Enter') {
-      onEnterPress(searchQuery);
+      onEnterPress(value);
     }
   };
 
@@ -28,11 +24,8 @@ const SearchInputField: React.FC<SearchInputFieldProps> = ({
       className="input-field"
       type="text"
       placeholder={placeholder}
-      value={searchQuery}
-      onChange={(event) => {
-        handleChange(event);
-        onChange(event);
-      }}
+      value={value}
+      onChange={onChange}
       onKeyDown={handleKeyPress}
     />
   );
