@@ -11,8 +11,8 @@ import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
 import { useTheme } from '../context/useTheme';
 import ItemDetails from '../components/ItemDetails/ItemDetails';
 import { fetchItems } from '../utils/pokemonApi';
-import { useSearchParams } from 'next/router';
 import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 
 export interface AppProps {
   initialData: { data: Item[]; totalCount: number };
@@ -85,6 +85,10 @@ const App: React.FC<AppProps> = ({ initialData }) => {
     fetchData();
   }, [searchQuery, currentPage, dispatch]);
   useEffect(() => {
+    if (!searchParams) {
+      setSelectedItem(null);
+      return;
+    }
     const details = searchParams.get('details');
     if (details) {
       const item = data?.data.find((i) => i.id === details);

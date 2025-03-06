@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../Store/Store';
 import { updateSelectedItems } from '../../Store/resultsSlice';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Item } from '../../types/types';
+import Item from '../../types/types';
 import { ResultProps } from '../../types/types';
 
 export const Result: React.FC<ResultProps> = ({ items, onItemClick }) => {

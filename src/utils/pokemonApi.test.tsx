@@ -1,5 +1,6 @@
 import { fetchItems, fetchItemDetails } from './pokemonApi';
 import { Item } from '../components/Result/Result';
+import { vi } from 'vitest';
 
 global.fetch = vi.fn();
 

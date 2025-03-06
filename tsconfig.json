@@ -33,17 +33,22 @@
         "name": "next"
       }
     ],
-    "noEmit": true
+    "noEmit": false
   },
   "include": [
     "next-env.d.ts",
-    "./dist/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
     "src",
     "src/global.d.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__mocks__",
+    "./dist/types/**/*.ts"
   ]
 }
