@@ -127,7 +127,6 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   }, [searchParams, router]);
 
   const handleMainClick = useCallback(() => {
-    console.log('handleMainClick called', selectedItem);
     if (selectedItem) {
       setSelectedItem(null);
       const newSearchParams = new URLSearchParams(searchParams.toString());
