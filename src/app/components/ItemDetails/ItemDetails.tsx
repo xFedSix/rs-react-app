@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Item } from '../../types/types';
 import Loader from '../Loader/Loader';
 import { fetchItemDetails } from '../../utils/pokemonApi';

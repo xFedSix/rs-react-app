@@ -10,7 +10,7 @@ import PaginationWrapper from '../components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
 import { useTheme } from '../context/useTheme';
 import { fetchItems } from '../utils/pokemonApi';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 
 export interface AppProps {
