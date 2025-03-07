@@ -3,11 +3,7 @@ import AppWrapper from './[[...slug]]/AppWrapper';
 import { AppProps } from '../types/types';
 
 const HomePage: React.FC<AppProps> = ({ initialData }) => {
-  return (
-    <div data-testid="app">
-      <AppWrapper initialData={initialData} />
-    </div>
-  );
+  return <AppWrapper initialData={initialData} />;
 };
 
 export default HomePage;

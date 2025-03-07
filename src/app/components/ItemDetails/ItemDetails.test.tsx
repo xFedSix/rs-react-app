@@ -3,9 +3,9 @@ import '@testing-library/jest-dom';
 import ItemDetails from './ItemDetails';
 import { Item } from '../Result/Result';
 import { fetchItemDetails } from '../../utils/pokemonApi';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
-vi.mock('next/router', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: vi.fn()
 }));
 

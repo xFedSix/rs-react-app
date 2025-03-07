@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import HomePage from '../pages/HomePage';
+import HomePage from '../HomePage';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../Store/Store';
 import { ThemeProvider } from '../context/ThemeContext';
-import { useRouter, useSearchParams } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-vi.mock('next/router', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   useSearchParams: vi.fn()
 }));
