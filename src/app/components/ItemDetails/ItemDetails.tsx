@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Item } from '../../types/types';
 import Loader from '../Loader/Loader';
 import { fetchItemDetails } from '../../utils/pokemonApi';
@@ -13,6 +13,8 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
   const [details, setDetails] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!item || !item.id) {
@@ -34,18 +36,14 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
   }, [item]);
 
   const handleCloseDetails = useCallback(() => {
-    const currentQuery = { ...router.query };
-    delete currentQuery.details;
-    router.push(
-      {
-        pathname: router.pathname,
-        query: currentQuery
-      },
-      undefined,
-      { shallow: true }
-    );
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.delete('details');
+
+    router.push(`${pathname}?${currentParams.toString()}`, undefined, {
+      shallow: true
+    });
     onClose();
-  }, [router, onClose]);
+  }, [router, onClose, searchParams, pathname]);
 
   if (loading) {
     return <Loader />;
