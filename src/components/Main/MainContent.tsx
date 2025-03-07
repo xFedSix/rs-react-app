@@ -14,10 +14,11 @@ const MainContent: React.FC<MainContentProps> = ({
   isLoading,
   onItemClick,
   selectedItem,
-  onCloseDetails
+  onCloseDetails,
+  onMainClick
 }) => {
   return (
-    <div className="main-content">
+    <div className="main-content" onClick={onMainClick}>
       <Main isLoading={isLoading} onItemClick={onItemClick} />
       <div className="details-panel">
         {selectedItem && (
