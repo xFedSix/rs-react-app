@@ -39,8 +39,8 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.delete('details');
 
-    router.push(`${pathname}?${newSearchParams.toString()}`, undefined, {
-      shallow: true
+    router.push(`${pathname}?${newSearchParams.toString()}`, {
+      scroll: false
     });
     onClose();
   }, [router, onClose, searchParams, pathname]);

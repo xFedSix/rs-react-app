@@ -8,6 +8,7 @@ interface MainContentProps {
   onItemClick: (item: Item) => void;
   selectedItem: Item | null;
   onCloseDetails: () => void;
+  onMainClick: () => void;
 }
 
 const MainContent: React.FC<MainContentProps> = ({

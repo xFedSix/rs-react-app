@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { Item } from '../types/types';
 import Header from '../components/Header/Header';
 import Flyout from '../components/Flyout/Flyout';
@@ -16,7 +16,7 @@ export interface AppProps {
   initialData: { data: Item[]; totalCount: number };
 }
 
-const App: React.FC<AppProps> = ({ initialData }) => {
+const AppContent: React.FC<AppProps> = ({ initialData }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,9 +109,9 @@ const App: React.FC<AppProps> = ({ initialData }) => {
       setSelectedItem(item);
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set('page', currentPage.toString());
-      newSearchParams.set('details', item.id);
-      router.push(`/?${newSearchParams.toString()}`, undefined, {
-        shallow: true
+      newSearchParams.set('details', item.id.toString());
+      router.push(`/?${newSearchParams.toString()}`, {
+        scroll: false
       });
     },
     [router, searchParams, currentPage]
@@ -121,8 +121,8 @@ const App: React.FC<AppProps> = ({ initialData }) => {
     setSelectedItem(null);
     const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.delete('details');
-    router.push(`/?${newSearchParams.toString()}`, undefined, {
-      shallow: true
+    router.push(`/?${newSearchParams.toString()}`, {
+      scroll: false
     });
   }, [searchParams, router]);
 
@@ -131,8 +131,8 @@ const App: React.FC<AppProps> = ({ initialData }) => {
       setSelectedItem(null);
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('details');
-      router.push(`/?${newSearchParams.toString()}`, undefined, {
-        shallow: true
+      router.push(`/?${newSearchParams.toString()}`, {
+        scroll: false
       });
     }
   }, [selectedItem, searchParams, router]);
@@ -149,8 +149,8 @@ const App: React.FC<AppProps> = ({ initialData }) => {
         newSearchParams.set('details', details);
       }
 
-      router.push(`/?${newSearchParams.toString()}`, undefined, {
-        shallow: true
+      router.push(`/?${newSearchParams.toString()}`, {
+        scroll: false
       });
       setTriggerFetch(true);
     },
@@ -181,4 +181,11 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   );
 };
 
+const App: React.FC<AppProps> = ({ initialData }) => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AppContent initialData={initialData} />
+    </Suspense>
+  );
+};
 export default App;
