@@ -10,8 +10,7 @@ import PaginationWrapper from '../components/Pagination/PaginationWrapper';
 import { ThemeSwitcher } from '../components/ThemeSwitcher/ThemeSwitcher';
 import { useTheme } from '../context/useTheme';
 import { fetchItems } from '../utils/pokemonApi';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export interface AppProps {
   initialData: { data: Item[]; totalCount: number };
@@ -32,6 +31,7 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
 
   useEffect(() => {
     document.body.className = theme;
@@ -107,24 +107,56 @@ const App: React.FC<AppProps> = ({ initialData }) => {
   const handleItemClick = useCallback(
     (item: Item) => {
       setSelectedItem(item);
-      router.push(`/?details=${item.id}`, undefined, { shallow: true });
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('page', currentPage.toString());
+      newSearchParams.set('details', item.id);
+      router.push(`/?${newSearchParams.toString()}`, undefined, {
+        shallow: true
+      });
     },
-    [router]
+    [router, searchParams, currentPage]
   );
 
   const handleCloseDetails = useCallback(() => {
     setSelectedItem(null);
-  }, []);
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.delete('details');
+    router.push(`/?${newSearchParams.toString()}`, undefined, {
+      shallow: true
+    });
+  }, [searchParams, router]);
 
   const handleMainClick = useCallback(() => {
+    console.log('handleMainClick called', selectedItem);
     if (selectedItem) {
-      handleCloseDetails();
+      setSelectedItem(null);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.delete('details');
+      router.push(`/?${newSearchParams.toString()}`, undefined, {
+        shallow: true
+      });
     }
-  }, [selectedItem, handleCloseDetails]);
+  }, [selectedItem, searchParams, router]);
 
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
+      setIsSearchRequested(true);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('page', page.toString());
+
+      const details = searchParams.get('details');
+      if (details) {
+        newSearchParams.set('details', details);
+      }
+
+      router.push(`/?${newSearchParams.toString()}`, undefined, {
+        shallow: true
+      });
+      setTriggerFetch(true);
+    },
+    [searchParams, router]
+  );
   return (
     <div className="container">
       <div data-testid="app" className={`app ${theme}`}>
@@ -136,6 +168,7 @@ const App: React.FC<AppProps> = ({ initialData }) => {
           onItemClick={handleItemClick}
           selectedItem={selectedItem}
           onCloseDetails={handleCloseDetails}
+          onMainClick={handleMainClick}
         />
         <PaginationWrapper
           isLoading={isLoading}
