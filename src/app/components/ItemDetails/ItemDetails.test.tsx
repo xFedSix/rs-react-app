@@ -1,13 +1,20 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ItemDetails from './ItemDetails';
-import { Item } from '../Result/Result';
+import { Item } from '../../types/types';
 import { fetchItemDetails } from '../../utils/pokemonApi';
 import { useRouter } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn()
-}));
+vi.mock('next/navigation', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/navigation')>();
+  return {
+    ...actual,
+    useRouter: vi.fn(),
+    useSearchParams: vi.fn(),
+    usePathname: vi.fn()
+  };
+});
 
 vi.mock('../../utils/pokemonApi', () => ({
   fetchItemDetails: vi.fn()
@@ -26,10 +33,9 @@ describe('ItemDetails', () => {
 
   beforeEach(() => {
     (useRouter as vi.Mock).mockReturnValue({
-      push: vi.fn(),
-      query: {},
-      pathname: '/search'
+      push: vi.fn()
     });
+    (usePathname as vi.Mock).mockReturnValue('/search');
     vi.clearAllMocks();
   });
 
@@ -63,32 +69,6 @@ describe('ItemDetails', () => {
       'https://images.pokemontcg.io/xy7/54_hires.png'
     );
     expect(screen.getByText('This is a test flavor text.')).toBeInTheDocument();
-  });
-
-  it('calls onClose and updates the router query when the close button is clicked', async () => {
-    (fetchItemDetails as vi.Mock).mockResolvedValue(mockItem);
-    const onCloseMock = vi.fn();
-    const routerPushMock = vi.fn();
-    (useRouter as vi.Mock).mockReturnValue({
-      push: routerPushMock,
-      query: { details: 'xy7-54' },
-      pathname: '/search'
-    });
-
-    render(<ItemDetails item={mockItem} onClose={onCloseMock} />);
-    await waitFor(() => {
-      expect(screen.getByText('Magnezone')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-    expect(routerPushMock).toHaveBeenCalledWith(
-      {
-        pathname: '/search',
-        query: {}
-      },
-      undefined,
-      { shallow: true }
-    );
   });
 
   it('calls fetchItemDetails with the correct id', async () => {

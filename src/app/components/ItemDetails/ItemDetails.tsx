@@ -36,10 +36,10 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
   }, [item]);
 
   const handleCloseDetails = useCallback(() => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.delete('details');
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.delete('details');
 
-    router.push(`${pathname}?${currentParams.toString()}`, undefined, {
+    router.push(`${pathname}?${newSearchParams.toString()}`, undefined, {
       shallow: true
     });
     onClose();
