@@ -1,25 +1,21 @@
 import { useLoaderData } from 'react-router-dom';
-import type { detailsLoader } from '../loaders/detailsLoader';
-import './ItemDetails.scss';
+
+import { Item } from '../Result/Result';
 
 interface ItemDetailsProps {
-  item: Item;
+  item: Item[];
   onClose: () => void;
 }
 
 const ItemDetails: React.FC<ItemDetailsProps> = ({ onClose }) => {
-  const { item } = useLoaderData<typeof detailsLoader>();
+  const item = useLoaderData() as Item;
 
   return (
     <div className="item-details">
       <button onClick={onClose}>Close</button>
-      <h2>{details.name}</h2>
-      <img
-        className="details-img"
-        src={details.images.large}
-        alt={details.name}
-      />
-      <p>{details.flavorText}</p>
+      <h2>{item.name}</h2>
+      <img className="details-img" src={item.images.large} alt={item.name} />
+      <p>{item.flavorText}</p>
     </div>
   );
 };

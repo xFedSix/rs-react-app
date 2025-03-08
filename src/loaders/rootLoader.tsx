@@ -1,14 +1,5 @@
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { fetchData } from '../API/fetchData';
-import { Item } from '../components/Result/Result';
-
-export type LoaderData = {
-  items: Item[];
-  totalCount: number;
-  currentPage: number;
-  searchQuery: string;
-  theme: string;
-};
 
 export async function rootLoader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
