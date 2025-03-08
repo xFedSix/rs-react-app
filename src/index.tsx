@@ -1,21 +1,13 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { store } from './Store/Store';
+import React from 'react';
+import { hydrateRoot } from 'react-dom/client';
+import AppWrapper from './AppWrapper';
 import './index.css';
-import App from './App.tsx';
-import ErrorBoundary from './ErrorsHandlers/ErrorBoundary.tsx';
-import './styles/global.scss';
 
-const rootElement = document.getElementById('root');
-if (rootElement) {
-  createRoot(rootElement).render(
-    <StrictMode>
-      <ErrorBoundary>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </ErrorBoundary>
-    </StrictMode>
-  );
-}
+const rootElement = document.getElementById('root')!;
+
+hydrateRoot(
+  rootElement,
+  <React.StrictMode>
+    <AppWrapper />
+  </React.StrictMode>
+);

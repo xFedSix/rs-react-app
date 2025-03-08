@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Item } from '../Result/Result';
-import Loader from '../Loader/Loader';
+import { useLoaderData } from 'react-router-dom';
+import type { detailsLoader } from '../loaders/detailsLoader';
 import './ItemDetails.scss';
 
 interface ItemDetailsProps {
@@ -8,43 +7,8 @@ interface ItemDetailsProps {
   onClose: () => void;
 }
 
-const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onClose }) => {
-  const [details, setDetails] = useState<Item | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!item || !item.id) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchDetails = async () => {
-      try {
-        const response = await fetch(
-          `https://api.pokemontcg.io/v2/cards/${item.id}`
-        );
-        const data = await response.json();
-        if (data.error) {
-          setDetails(null);
-        } else {
-          setDetails(data.data);
-        }
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDetails();
-  }, [item]);
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (!details) {
-    return <div>No details available.</div>;
-  }
+const ItemDetails: React.FC<ItemDetailsProps> = ({ onClose }) => {
+  const { item } = useLoaderData<typeof detailsLoader>();
 
   return (
     <div className="item-details">
