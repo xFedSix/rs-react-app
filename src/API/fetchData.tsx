@@ -15,6 +15,8 @@ export const fetchData = async (
     queryString ? `&${queryString}` : ''
   }${orderBy ? `&orderBy=${orderBy}` : ''}${select ? `&select=${select}` : ''}`;
 
+  console.log('Fetching data from URL:', url);
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -27,15 +29,19 @@ export const fetchData = async (
     }
 
     const data = await response.json();
+    console.log('Raw API response:', data);
+
+    if (!data.data || !Array.isArray(data.data)) {
+      console.error('Unexpected data structure:', data);
+      throw new Error('Unexpected data structure received from API');
+    }
 
     return {
       data: data.data,
       totalCount: data.totalCount ?? data.count ?? 0
     };
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error('An unknown error occurred');
+    console.error('Error in fetchData:', error);
+    throw error;
   }
 };

@@ -20,6 +20,7 @@ const resultsSlice = createSlice({
   initialState,
   reducers: {
     setItems: (state, action: PayloadAction<Item[]>) => {
+      console.log('setItems reducer called with:', action.payload);
       state.items = action.payload;
     },
     setError: (state, action: PayloadAction<string | null>) => {

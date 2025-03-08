@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { fetchData } from '../API/fetchData';
+import { Item } from '../components/Result/Result';
 
 export type LoaderData = {
   items: Item[];

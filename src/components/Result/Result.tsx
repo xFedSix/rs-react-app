@@ -22,9 +22,13 @@ export interface ResultsProps {
 
 const Result = ({ onItemClick }: ResultsProps) => {
   const dispatch = useDispatch();
-  const { items, error, selectedItems } = useSelector(
+  const { items, error, selectedItems, isLoading } = useSelector(
     (state: RootState) => state.results
   );
+  useEffect(() => {
+    console.log('Result component useEffect:', { items, error, isLoading });
+  }, [items, error, isLoading]);
+
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   useEffect(() => {
     if (Array.isArray(items)) {

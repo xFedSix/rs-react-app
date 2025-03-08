@@ -46,7 +46,9 @@ export default resultsSlice.reducer;
 
 const customLoggerMiddleware =
   () => (next: (action: any) => any) => (action: any) => {
+    console.log('Dispatching action:', action);
     let result = next(action);
+    console.log('New state:', store.getState());
     return result;
   };
 
@@ -58,5 +60,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(customLoggerMiddleware)
 });
 
+console.log('Redux store created:', store.getState());
+console.log('Initial Redux state:', store.getState());
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
