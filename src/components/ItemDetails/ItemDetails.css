@@ -1,0 +1,18 @@
+.details-section {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  padding: 1rem;
+  border-left: 1px solid #ccc;
+  background-color: #fff;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.details-section .details-img {
+  width: 50%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}/*# sourceMappingURL=ItemDetails.css.map */

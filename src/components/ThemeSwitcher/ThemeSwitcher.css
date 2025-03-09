@@ -1,0 +1,13 @@
+.theme-switcher {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 30px;
+}
+.theme-switcher label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.theme-switcher input {
+  margin-right: 5px;
+}/*# sourceMappingURL=ThemeSwitcher.css.map */
