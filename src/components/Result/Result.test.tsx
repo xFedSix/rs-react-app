@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import Result from './Result';
 import resultsReducer, { updateSelectedItems } from '../../Store/resultsSlice';
 import { Item } from '../../types/types';
+import React from 'react';
 
 const createMockStore = (initialState: any = {}) =>
   configureStore({

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Item } from '../types/types';
 
-interface ResultsState {
+export interface ResultsState {
   items: Item[] | Item;
   error: string | null;
   selectedItems: Item[];

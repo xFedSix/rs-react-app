@@ -1,6 +1,8 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ErrorBoundary from './ErrorBoundary';
+import { describe, expect, it } from 'vitest';
+import React from 'react';
 
 describe('ErrorBoundary', () => {
   it('renders children without error', () => {

@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect } from 'vitest';
 import Loader from './Loader';
+import React from 'react';
 
 describe('Loader', () => {
   it('renders without crashing', () => {

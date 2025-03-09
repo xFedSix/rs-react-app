@@ -1,6 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SearchBar from './SearchBar';
+import { describe, it, expect, vitest, beforeEach } from 'vitest';
+import React from 'react';
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

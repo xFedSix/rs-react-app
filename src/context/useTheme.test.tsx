@@ -1,8 +1,9 @@
 import { render, act } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useTheme } from './useTheme';
 import { ThemeProvider } from './ThemeContext';
 import { useLayoutEffect } from 'react';
+import React from 'react';
 
 const TestComponent = () => {
   const { theme } = useTheme();

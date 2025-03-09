@@ -1,6 +1,8 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SearchInputField from './SearchInputField';
+import { describe, it, expect, vitest, beforeEach } from 'vitest';
+import React from 'react';
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -33,7 +35,6 @@ describe('SearchInputField', () => {
         value=""
         onChange={() => {}}
         onEnterPress={() => {}}
-        onInitialFetch={() => {}}
       />
     );
     expect(screen.getByPlaceholderText('Search Pokémon')).toBeInTheDocument();

@@ -1,4 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vitest } from 'vitest';
+import React from 'react';
 import '@testing-library/jest-dom';
 import Button from './Button';
 

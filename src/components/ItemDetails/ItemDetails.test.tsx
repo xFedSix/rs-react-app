@@ -1,9 +1,11 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ItemDetails from './ItemDetails';
-import { Item } from '../Result/Result';
+import { Item } from '../../types/types';
 import { fetchItemDetails } from '../../utils/pokemonApi';
 import { useRouter } from 'next/router';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import React from 'react';
 
 vi.mock('next/router', () => ({
   useRouter: vi.fn()

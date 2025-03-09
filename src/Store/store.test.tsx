@@ -2,7 +2,7 @@ import { store } from './Store';
 import { setItems, setError, updateSelectedItems } from './resultsSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import resultsReducer from './resultsSlice';
-import type { Item } from './Store';
+import type { Item } from '../types/types';
 import { describe, it, expect, vi } from 'vitest';
 
 describe('Store Configuration', () => {

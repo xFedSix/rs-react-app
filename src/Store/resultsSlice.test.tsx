@@ -1,9 +1,11 @@
+import { describe, expect, it } from 'vitest';
 import resultsReducer, {
   setItems,
   setError,
   updateSelectedItems
 } from './resultsSlice';
-import { Item, ResultsState } from './Store';
+import { ResultsState } from './resultsSlice';
+import { Item } from '../types/types';
 
 describe('resultsSlice', () => {
   const initialState: ResultsState = {
